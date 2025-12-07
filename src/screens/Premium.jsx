@@ -3,8 +3,11 @@ import { ArrowLeft, Check, Crown, Zap, Star } from 'lucide-react';
 import Button from '../components/Button';
 import { motion } from 'framer-motion';
 import { setUserTier, TIERS } from '../utils/userTier';
+import { useTheme } from '../context/ThemeContext';
 
 const Premium = ({ onBack, onPurchase }) => {
+    const { theme } = useTheme();
+
     const handlePurchase = (tier) => {
         // Simulate purchase
         if (confirm(`Satın almayı simüle et: ${tier === TIERS.LIFETIME ? 'Lifetime ($14.99)' : 'Premium ($3.99/ay)'}`)) {
@@ -18,10 +21,14 @@ const Premium = ({ onBack, onPurchase }) => {
     return (
         <div className="flex flex-col h-full gap-4 pb-4">
             <div className="flex items-center gap-2">
-                <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
-                    <ArrowLeft className="w-6 h-6 text-gray-600" />
+                <button
+                    onClick={onBack}
+                    className="p-2 rounded-full hover:bg-black/5 transition-colors"
+                    style={{ color: theme.colors.text }}
+                >
+                    <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h2 className="text-xl font-bold text-gray-800">Go Premium</h2>
+                <h2 className="text-xl font-bold font-serif">Grimoire Access</h2>
             </div>
 
             <motion.div
@@ -30,98 +37,57 @@ const Premium = ({ onBack, onPurchase }) => {
                 className="flex-1 overflow-y-auto space-y-4"
             >
                 {/* Free Tier */}
-                <div className="bg-white p-4 rounded-xl border-2 border-gray-200">
+                <div className="p-4 rounded-xl border-2" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
                     <div className="flex items-center gap-2 mb-2">
-                        <Star className="w-5 h-5 text-gray-400" />
-                        <h3 className="font-bold text-lg">Ücretsiz</h3>
+                        <Star className="w-5 h-5 opacity-50" />
+                        <h3 className="font-bold text-lg font-serif">Novice</h3>
                     </div>
-                    <p className="text-2xl font-bold text-gray-800 mb-3">$0</p>
-                    <ul className="space-y-2 mb-4">
+                    <p className="text-2xl font-bold mb-3 font-serif">$0</p>
+                    <ul className="space-y-2 mb-4 opacity-80">
                         <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-green-500 mt-0.5" />
-                            <span>Aylık 10 dönüştürme</span>
+                            <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
+                            <span>10 Conversions / Month</span>
                         </li>
                         <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-green-500 mt-0.5" />
-                            <span>Temel özellikler</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm text-gray-400">
-                            <span className="text-xs">⚠️</span>
-                            <span>Her dönüştürmede reklam</span>
+                            <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
+                            <span>Basic Spells</span>
                         </li>
                     </ul>
-                    <Button variant="ghost" disabled>Mevcut Plan</Button>
+                    <button className="w-full py-2 rounded-lg border opacity-50 cursor-not-allowed font-serif" style={{ borderColor: theme.colors.border }}>Current Rank</button>
                 </div>
 
                 {/* Lifetime Tier - RECOMMENDED */}
-                <div className="bg-gradient-to-br from-teal-50 to-primary/10 p-4 rounded-xl border-2 border-primary relative overflow-hidden">
-                    <div className="absolute top-2 right-2 bg-primary text-teal-900 text-xs font-bold px-2 py-1 rounded-full">
-                        ÖNERİLEN
+                <div className="p-4 rounded-xl border-2 relative overflow-hidden" style={{ backgroundColor: `${theme.colors.accent}10`, borderColor: theme.colors.accent }}>
+                    <div className="absolute top-0 right-0 text-xs font-bold px-3 py-1 rounded-bl-xl" style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}>
+                        RECOMMENDED
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                        <Crown className="w-5 h-5 text-teal-600" />
-                        <h3 className="font-bold text-lg">Lifetime</h3>
+                        <Crown className="w-5 h-5" style={{ color: theme.colors.accent }} />
+                        <h3 className="font-bold text-lg font-serif">Grand Maester</h3>
                     </div>
-                    <p className="text-2xl font-bold text-gray-800 mb-1">$14.99</p>
-                    <p className="text-xs text-gray-500 mb-3">Tek seferlik ödeme (≈ 500 TL)</p>
+                    <p className="text-2xl font-bold mb-1 font-serif" style={{ color: theme.colors.accent }}>$14.99</p>
+                    <p className="text-xs opacity-60 mb-3">One-time Offering</p>
                     <ul className="space-y-2 mb-4">
                         <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-teal-600 mt-0.5" />
-                            <span className="font-medium">Sınırsız dönüştürme</span>
+                            <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
+                            <span className="font-bold">Unlimited Conversions</span>
                         </li>
                         <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-teal-600 mt-0.5" />
-                            <span className="font-medium">Reklamsız</span>
+                            <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
+                            <span>No Distractions (Ads)</span>
                         </li>
                         <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-teal-600 mt-0.5" />
-                            <span className="font-medium">Yüksek kalite API dönüşüm</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-teal-600 mt-0.5" />
-                            <span>Tüm özellikler</span>
+                            <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
+                            <span>High Quality Alchemy</span>
                         </li>
                     </ul>
-                    <Button onClick={() => handlePurchase(TIERS.LIFETIME)} variant="primary">
-                        <Crown className="w-4 h-4" />
-                        Lifetime Satın Al
-                    </Button>
-                </div>
-
-                {/* Premium Tier */}
-                <div className="bg-gradient-to-br from-pink-50 to-secondary/10 p-4 rounded-xl border-2 border-secondary">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Zap className="w-5 h-5 text-pink-600" />
-                        <h3 className="font-bold text-lg">Premium</h3>
-                    </div>
-                    <p className="text-2xl font-bold text-gray-800 mb-1">$3.99<span className="text-sm text-gray-500">/ay</span></p>
-                    <p className="text-xs text-gray-500 mb-3">Aylık abonelik (≈ 133 TL/ay)</p>
-                    <ul className="space-y-2 mb-4">
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-pink-600 mt-0.5" />
-                            <span className="font-medium">Sınırsız dönüştürme</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-pink-600 mt-0.5" />
-                            <span className="font-medium">Reklamsız</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-pink-600 mt-0.5" />
-                            <span className="font-medium">Yüksek kalite API dönüşüm</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-pink-600 mt-0.5" />
-                            <span className="font-medium">Öncelikli destek</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-pink-600 mt-0.5" />
-                            <span>Cloud yedekleme (yakında)</span>
-                        </li>
-                    </ul>
-                    <Button onClick={() => handlePurchase(TIERS.PREMIUM)} variant="accent">
-                        <Zap className="w-4 h-4" />
-                        Premium'a Abone Ol
-                    </Button>
+                    <button
+                        onClick={() => handlePurchase(TIERS.LIFETIME)}
+                        className="w-full py-3 rounded-lg font-bold font-serif shadow-lg transition-transform active:scale-95"
+                        style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                    >
+                        Unlock Forever
+                    </button>
                 </div>
             </motion.div>
         </div>

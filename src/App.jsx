@@ -20,8 +20,11 @@ import {
 } from './utils/userTier';
 
 import KindleInstructionModal from './components/KindleInstructionModal';
+import Onboarding from './screens/Onboarding';
+import { useUser } from './context/UserContext';
 
 function App() {
+  const { user } = useUser();
   const [currentScreen, setCurrentScreen] = useState('home');
   const [pdfFile, setPdfFile] = useState(null);
   const [metadata, setMetadata] = useState(null);
@@ -38,6 +41,10 @@ function App() {
     setUserTierState(tier);
     setShowAds(getTierLimits(tier).showAds);
   }, []);
+
+  if (!user.isOnboarded) {
+    return <Onboarding />;
+  }
 
   const handleFileSelect = async (file) => {
     if (!canConvert()) {

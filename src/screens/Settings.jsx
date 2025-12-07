@@ -1,38 +1,49 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, Crown, HelpCircle, ChevronRight } from 'lucide-react';
-import Button from '../components/Button';
-import { motion } from 'framer-motion';
+import { ArrowLeft, Save, Crown, User, Palette, Globe, BookOpen, ChevronRight, Check } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
 import { TIERS } from '../utils/userTier';
+import { motion } from 'framer-motion';
 
-const Settings = ({ onBack, showAds, onRemoveAds, savedEmail, onSaveEmail, userTier, onNavigatePremium, onNavigateWhyUs }) => {
+const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium }) => {
+    const { theme, setTheme, themes } = useTheme();
+    const { user, updateUser } = useUser();
+
     const [email, setEmail] = useState(savedEmail || '');
+    const [name, setName] = useState(user.name || '');
+    const [isEditingName, setIsEditingName] = useState(false);
 
     const handleSave = () => {
         onSaveEmail(email);
+        updateUser({ name });
         onBack();
     };
 
     const getTierDisplay = () => {
         switch (userTier) {
             case TIERS.LIFETIME:
-                return { name: 'Lifetime', color: 'text-teal-600 bg-teal-50', icon: Crown };
+                return { name: 'Grand Maester', color: theme.colors.accent };
             case TIERS.PREMIUM:
-                return { name: 'Premium', color: 'text-pink-600 bg-pink-50', icon: Crown };
+                return { name: 'Scholar', color: theme.colors.accent };
             default:
-                return { name: 'Ücretsiz', color: 'text-gray-600 bg-gray-50', icon: null };
+                return { name: 'Novice', color: theme.colors.secondary };
         }
     };
 
     const tierDisplay = getTierDisplay();
-    const TierIcon = tierDisplay.icon;
 
     return (
-        <div className="flex flex-col h-full gap-6">
-            <div className="flex items-center gap-2">
-                <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
-                    <ArrowLeft className="w-6 h-6 text-gray-600" />
+        <div className="flex flex-col h-full gap-6 pb-20">
+            {/* Header */}
+            <div className="flex items-center gap-4 border-b pb-4" style={{ borderColor: theme.colors.border }}>
+                <button
+                    onClick={onBack}
+                    className="p-2 rounded-full hover:bg-black/5 transition-colors"
+                    style={{ color: theme.colors.text }}
+                >
+                    <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h2 className="text-xl font-bold text-gray-800">Ayarlar</h2>
+                <h2 className="text-2xl font-serif font-bold">Library Settings</h2>
             </div>
 
             <motion.div
@@ -40,62 +51,109 @@ const Settings = ({ onBack, showAds, onRemoveAds, savedEmail, onSaveEmail, userT
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
             >
-                {/* Tier Status */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="font-semibold text-gray-800 mb-2">Mevcut Plan</h3>
-                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${tierDisplay.color}`}>
-                        {TierIcon && <TierIcon className="w-5 h-5" />}
-                        <span className="font-medium">{tierDisplay.name}</span>
+                {/* Profile Section */}
+                <div className="p-4 rounded-xl border flex items-center gap-4" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center border-2" style={{ backgroundColor: `${theme.colors.accent}20`, borderColor: theme.colors.accent }}>
+                        <User size={32} color={theme.colors.accent} />
                     </div>
-                    {userTier === TIERS.FREE && (
-                        <button
-                            onClick={onNavigatePremium}
-                            className="mt-3 w-full flex items-center justify-between px-3 py-2 bg-gradient-to-r from-teal-400 to-primary text-teal-900 rounded-lg font-medium hover:shadow-md transition-all"
-                        >
-                            <span>Premium'a Geç</span>
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    )}
+                    <div className="flex-1">
+                        {isEditingName ? (
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                onBlur={() => setIsEditingName(false)}
+                                autoFocus
+                                className="bg-transparent border-b border-current font-serif font-bold text-lg w-full focus:outline-none"
+                            />
+                        ) : (
+                            <h3
+                                onClick={() => setIsEditingName(true)}
+                                className="font-serif font-bold text-lg cursor-pointer hover:opacity-70"
+                            >
+                                {name || 'Unknown Traveler'}
+                            </h3>
+                        )}
+                        <div className="flex items-center gap-2 text-sm opacity-70">
+                            <Crown size={14} color={tierDisplay.color} />
+                            <span style={{ color: tierDisplay.color }}>{tierDisplay.name}</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Kindle Preferences */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="font-semibold text-gray-800 mb-2">Kindle Tercihleri</h3>
-                    <div className="space-y-2">
-                        <label className="block text-sm text-gray-600">Varsayılan Kindle Email</label>
+                {/* Theme Selector */}
+                <div className="space-y-3">
+                    <h3 className="font-serif font-bold flex items-center gap-2">
+                        <Palette size={18} /> Atmosphere
+                    </h3>
+                    <div className="grid grid-cols-3 gap-2">
+                        {Object.values(themes).map(t => (
+                            <button
+                                key={t.id}
+                                onClick={() => setTheme(t.id)}
+                                className={`p-2 rounded-lg border-2 flex flex-col items-center gap-2 transition-all ${theme.id === t.id ? 'scale-105 shadow-md' : 'opacity-70 hover:opacity-100'
+                                    }`}
+                                style={{
+                                    backgroundColor: t.colors.bg,
+                                    borderColor: theme.id === t.id ? theme.colors.accent : 'transparent',
+                                    color: t.colors.text
+                                }}
+                            >
+                                <div className="w-full h-8 rounded bg-current opacity-20" />
+                                <span className="text-xs font-bold">{t.name.split(' ')[0]}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Kindle Email */}
+                <div className="space-y-3">
+                    <h3 className="font-serif font-bold flex items-center gap-2">
+                        <BookOpen size={18} /> Kindle Owl
+                    </h3>
+                    <div className="p-4 rounded-xl border" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
+                        <label className="block text-xs opacity-70 mb-1">Destination Address</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none"
+                            className="w-full bg-transparent border-b border-current py-2 focus:outline-none font-mono text-sm"
                             placeholder="username@kindle.com"
                         />
-                        <p className="text-xs text-gray-400">
-                            Bu email dosya gönderirken otomatik doldurulacak.
-                        </p>
                     </div>
                 </div>
 
-                {/* Why Us */}
-                <button
-                    onClick={onNavigateWhyUs}
-                    className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 rounded-lg">
-                            <HelpCircle className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <span className="font-medium text-gray-800">Neden Biz?</span>
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl border text-center" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
+                        <p className="text-2xl font-serif font-bold" style={{ color: theme.colors.accent }}>
+                            {user.stats?.booksConverted || 0}
+                        </p>
+                        <p className="text-xs opacity-70">Tomes Converted</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
-                </button>
+                    <div className="p-4 rounded-xl border text-center" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
+                        <p className="text-2xl font-serif font-bold" style={{ color: theme.colors.accent }}>
+                            {user.stats?.pagesRead || 0}
+                        </p>
+                        <p className="text-xs opacity-70">Pages Turned</p>
+                    </div>
+                </div>
+
+                {/* Version */}
+                <div className="text-center opacity-40 text-xs pt-4 font-mono">
+                    v2.0.0 (Dark Academia)
+                </div>
             </motion.div>
 
-            <div className="mt-auto">
-                <Button onClick={handleSave}>
-                    <Save className="w-5 h-5" />
-                    Ayarları Kaydet
-                </Button>
+            <div className="fixed bottom-6 left-0 right-0 px-6">
+                <button
+                    onClick={handleSave}
+                    className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+                    style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                >
+                    <Save size={20} />
+                    Save Changes
+                </button>
             </div>
         </div>
     );

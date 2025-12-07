@@ -1,0 +1,158 @@
+import React, { useState } from 'react';
+import { useUser } from '../context/UserContext';
+import { useTheme } from '../context/ThemeContext';
+import { ChevronRight, BookOpen, Palette, User, Check } from 'lucide-react';
+
+const GENRES = [
+    'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller',
+    'Horror', 'Historical', 'Non-Fiction', 'Classics', 'Poetry'
+];
+
+const Onboarding = ({ onComplete }) => {
+    const [step, setStep] = useState(0);
+    const { completeOnboarding } = useUser();
+    const { theme, setTheme, themes } = useTheme();
+
+    const [name, setName] = useState('');
+    const [selectedGenres, setSelectedGenres] = useState([]);
+
+    const handleNext = () => {
+        if (step < 3) setStep(step + 1);
+        else handleFinish();
+    };
+
+    const handleFinish = () => {
+        completeOnboarding(name, selectedGenres);
+        if (onComplete) onComplete();
+    };
+
+    const toggleGenre = (genre) => {
+        if (selectedGenres.includes(genre)) {
+            setSelectedGenres(selectedGenres.filter(g => g !== genre));
+        } else {
+            setSelectedGenres([...selectedGenres, genre]);
+        }
+    };
+
+    const renderStep = () => {
+        switch (step) {
+            case 0: // Welcome
+                return (
+                    <div className="text-center space-y-6 animate-fadeIn">
+                        <div className="w-24 h-24 mx-auto bg-[#c5a059]/20 rounded-full flex items-center justify-center border-2 border-[#c5a059]">
+                            <BookOpen size={48} color="#c5a059" />
+                        </div>
+                        <h1 className="text-4xl font-serif font-bold text-[#c5a059]">Welcome</h1>
+                        <p className="text-xl opacity-80 max-w-xs mx-auto">
+                            Your personal library awaits. Let's curate your experience.
+                        </p>
+                    </div>
+                );
+
+            case 1: // Identity
+                return (
+                    <div className="space-y-6 animate-fadeIn w-full max-w-xs mx-auto">
+                        <div className="text-center">
+                            <User size={48} className="mx-auto mb-4 text-[#c5a059]" />
+                            <h2 className="text-2xl font-serif font-bold">Who are you?</h2>
+                            <p className="opacity-70 text-sm">How should we address you, traveler?</p>
+                        </div>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Enter your name..."
+                            className="w-full bg-black/10 border-b-2 border-[#c5a059] p-3 text-center text-xl focus:outline-none focus:bg-black/20 transition-colors placeholder-opacity-50 placeholder-current"
+                            autoFocus
+                        />
+                    </div>
+                );
+
+            case 2: // Taste
+                return (
+                    <div className="space-y-6 animate-fadeIn w-full">
+                        <div className="text-center">
+                            <BookOpen size={48} className="mx-auto mb-4 text-[#c5a059]" />
+                            <h2 className="text-2xl font-serif font-bold">Your Taste</h2>
+                            <p className="opacity-70 text-sm">What stories whisper to you?</p>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {GENRES.map(genre => (
+                                <button
+                                    key={genre}
+                                    onClick={() => toggleGenre(genre)}
+                                    className={`px-4 py-2 rounded-full border transition-all ${selectedGenres.includes(genre)
+                                            ? 'bg-[#c5a059] text-[#1a1614] border-[#c5a059] font-bold'
+                                            : 'bg-transparent border-current opacity-60 hover:opacity-100'
+                                        }`}
+                                >
+                                    {genre}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+
+            case 3: // Theme
+                return (
+                    <div className="space-y-6 animate-fadeIn w-full">
+                        <div className="text-center">
+                            <Palette size={48} className="mx-auto mb-4 text-[#c5a059]" />
+                            <h2 className="text-2xl font-serif font-bold">Atmosphere</h2>
+                            <p className="opacity-70 text-sm">Choose your reading sanctuary.</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-4">
+                            {Object.values(themes).map(t => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => setTheme(t.id)}
+                                    className={`p-4 rounded-lg border-2 flex items-center justify-between transition-all ${theme.id === t.id
+                                            ? 'border-[#c5a059] bg-white/5 shadow-lg scale-105'
+                                            : 'border-transparent bg-black/20 hover:bg-black/30'
+                                        }`}
+                                    style={{ backgroundColor: t.colors.bg, color: t.colors.text }}
+                                >
+                                    <span className="font-serif font-bold">{t.name}</span>
+                                    {theme.id === t.id && <Check size={20} color={t.colors.accent} />}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 transition-colors duration-500"
+            style={{ backgroundColor: theme.colors.bg, color: theme.colors.text }}>
+
+            {/* Progress Dots */}
+            <div className="absolute top-10 flex gap-2">
+                {[0, 1, 2, 3].map(i => (
+                    <div
+                        key={i}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${i === step ? 'bg-[#c5a059] w-6' : 'bg-current opacity-20'
+                            }`}
+                    />
+                ))}
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center w-full max-w-md">
+                {renderStep()}
+            </div>
+
+            <button
+                onClick={handleNext}
+                disabled={step === 1 && !name.trim()}
+                className="mb-10 flex items-center gap-2 px-8 py-3 rounded-full bg-[#c5a059] text-[#1a1614] font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(197,160,89,0.3)]"
+            >
+                {step === 3 ? 'Enter Library' : 'Continue'}
+                <ChevronRight size={20} />
+            </button>
+        </div>
+    );
+};
+
+export default Onboarding;

@@ -1,21 +1,37 @@
 import React from 'react';
 import { BookOpen, Settings } from 'lucide-react';
 import AdPlaceholder from './AdPlaceholder';
+import { useTheme } from '../context/ThemeContext';
 
 const Layout = ({ children, showAds, onRemoveAds, onOpenSettings }) => {
+    const { theme } = useTheme();
+
     return (
-        <div className="flex flex-col h-screen bg-background text-gray-800 font-sans overflow-hidden">
+        <div
+            className="flex flex-col h-screen font-serif overflow-hidden transition-colors duration-300"
+            style={{ backgroundColor: theme.colors.bg, color: theme.colors.text }}
+        >
             {/* Header */}
-            <header className="bg-white shadow-sm px-4 py-3 flex items-center justify-between shrink-0 z-10">
+            <header
+                className="shadow-sm px-4 py-3 flex items-center justify-between shrink-0 z-10 transition-colors duration-300 border-b"
+                style={{
+                    backgroundColor: theme.colors.card,
+                    borderColor: theme.colors.border
+                }}
+            >
                 <div className="flex items-center gap-2">
-                    <div className="bg-primary/20 p-2 rounded-lg">
-                        <BookOpen className="w-6 h-6 text-teal-600" />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: `${theme.colors.accent}20` }}>
+                        <BookOpen className="w-6 h-6" style={{ color: theme.colors.accent }} />
                     </div>
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-teal-500 to-primary bg-clip-text text-transparent">
+                    <h1 className="text-xl font-bold font-serif" style={{ color: theme.colors.accent }}>
                         PDF to EPUB
                     </h1>
                 </div>
-                <button onClick={onOpenSettings} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
+                <button
+                    onClick={onOpenSettings}
+                    className="p-2 rounded-full transition-colors hover:bg-black/5"
+                    style={{ color: theme.colors.secondary }}
+                >
                     <Settings className="w-6 h-6" />
                 </button>
             </header>
