@@ -147,23 +147,11 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                     v2.1.0 (Enchanted)
                 </div>
 
-                {/* Debug / Testing Actions */}
-                <div className="flex flex-col gap-2 pt-4">
-                    <button
-                        onClick={() => {
-                            const { setUserTier, TIERS } = require('../utils/userTier');
-                            setUserTier(TIERS.FREE);
-                            window.location.reload();
-                        }}
-                        className="text-xs underline opacity-50 hover:opacity-100"
-                        style={{ color: theme.colors.subtext }}
-                    >
-                        [Debug] Reset to Free Tier
-                    </button>
-
+                {/* Premium Plans Access */}
+                <div className="pt-2">
                     <button
                         onClick={onNavigatePremium}
-                        className="p-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
+                        className="w-full p-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
                         style={{
                             borderColor: theme.colors.accent,
                             color: theme.colors.accent,
@@ -171,7 +159,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                         }}
                     >
                         <Crown size={18} />
-                        View Premium Plans
+                        View Grimoire Plans
                     </button>
                 </div>
             </motion.div>

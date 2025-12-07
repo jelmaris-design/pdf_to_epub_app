@@ -38,16 +38,10 @@ function App() {
   const [pendingEmail, setPendingEmail] = useState('');
 
   useEffect(() => {
-    let tier = getUserTier();
-
-    // Debug Cheat Code: Force Free Tier if name is 'debug1485'
-    if (user.name === 'debug1485') {
-      tier = TIERS.FREE;
-    }
-
+    const tier = getUserTier();
     setUserTierState(tier);
     setShowAds(getTierLimits(tier).showAds);
-  }, [user.name]);
+  }, []);
 
   if (!user.isOnboarded) {
     return <Onboarding />;

@@ -1,10 +1,28 @@
-import React from 'react';
-import { BookOpen, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Settings, Plus, Book } from 'lucide-react';
 import AdPlaceholder from './AdPlaceholder';
 import { useTheme } from '../context/ThemeContext';
+import { getRemainingConversions, TIERS, getUserTier } from '../utils/userTier';
 
 const Layout = ({ children, showAds, onRemoveAds, onOpenSettings }) => {
     const { theme } = useTheme();
+    const [remaining, setRemaining] = useState(getRemainingConversions());
+    const [userTier, setUserTier] = useState(getUserTier());
+
+    // Update remaining count periodically or on focus (simple implementation)
+    useEffect(() => {
+        const updateStats = () => {
+            setRemaining(getRemainingConversions());
+            setUserTier(getUserTier());
+        };
+        updateStats();
+        window.addEventListener('focus', updateStats);
+        return () => window.removeEventListener('focus', updateStats);
+    }, []);
+
+    const handleAddMana = () => {
+        alert("Watch a short spell (ad) to replenish your ink? (Coming Soon)");
+    };
 
     return (
         <div
@@ -19,14 +37,32 @@ const Layout = ({ children, showAds, onRemoveAds, onOpenSettings }) => {
                     borderColor: theme.colors.border
                 }}
             >
-                <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: `${theme.colors.accent}20` }}>
-                        <BookOpen className="w-6 h-6" style={{ color: theme.colors.accent }} />
+                {/* Mana / Book Counter System */}
+                <div className="flex items-center gap-3">
+                    <div
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all"
+                        style={{
+                            backgroundColor: `${theme.colors.accent}10`,
+                            borderColor: theme.colors.accent
+                        }}
+                    >
+                        <Book size={16} style={{ color: theme.colors.accent }} />
+                        <span className="font-bold font-mono text-sm" style={{ color: theme.colors.text }}>
+                            {userTier === TIERS.FREE ? remaining : '∞'}
+                        </span>
+
+                        {userTier === TIERS.FREE && (
+                            <button
+                                onClick={handleAddMana}
+                                className="ml-1 p-0.5 rounded-full hover:bg-black/10 transition-colors"
+                                style={{ color: theme.colors.accent }}
+                            >
+                                <Plus size={14} strokeWidth={3} />
+                            </button>
+                        )}
                     </div>
-                    <h1 className="text-xl font-bold font-serif" style={{ color: theme.colors.accent }}>
-                        PDF to EPUB
-                    </h1>
                 </div>
+
                 <button
                     onClick={onOpenSettings}
                     className="p-2 rounded-full transition-colors hover:bg-black/5"
