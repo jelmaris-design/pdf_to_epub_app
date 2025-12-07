@@ -23,12 +23,12 @@ const Premium = ({ onBack, onPurchase }) => {
             <div className="flex items-center gap-2">
                 <button
                     onClick={onBack}
-                    className="p-2 rounded-full hover:bg-black/5 transition-colors"
+                    className="p-2 rounded-full hover:opacity-70 transition-colors"
                     style={{ color: theme.colors.text }}
                 >
                     <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h2 className="text-xl font-bold font-serif">Grimoire Access</h2>
+                <h2 className="text-xl font-bold font-serif" style={{ color: theme.colors.text }}>Grimoire Access</h2>
             </div>
 
             <motion.div
@@ -39,11 +39,11 @@ const Premium = ({ onBack, onPurchase }) => {
                 {/* Free Tier */}
                 <div className="p-4 rounded-xl border-2" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
                     <div className="flex items-center gap-2 mb-2">
-                        <Star className="w-5 h-5 opacity-50" />
-                        <h3 className="font-bold text-lg font-serif">Novice</h3>
+                        <Star className="w-5 h-5 opacity-50" style={{ color: theme.colors.subtext }} />
+                        <h3 className="font-bold text-lg font-serif" style={{ color: theme.colors.text }}>Novice</h3>
                     </div>
-                    <p className="text-2xl font-bold mb-3 font-serif">$0</p>
-                    <ul className="space-y-2 mb-4 opacity-80">
+                    <p className="text-2xl font-bold mb-3 font-serif" style={{ color: theme.colors.text }}>$0</p>
+                    <ul className="space-y-2 mb-4 opacity-80" style={{ color: theme.colors.subtext }}>
                         <li className="flex items-start gap-2 text-sm">
                             <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
                             <span>10 Conversions / Month</span>
@@ -53,7 +53,12 @@ const Premium = ({ onBack, onPurchase }) => {
                             <span>Basic Spells</span>
                         </li>
                     </ul>
-                    <button className="w-full py-2 rounded-lg border opacity-50 cursor-not-allowed font-serif" style={{ borderColor: theme.colors.border }}>Current Rank</button>
+                    <button
+                        className="w-full py-2 rounded-lg border opacity-50 cursor-not-allowed font-serif"
+                        style={{ borderColor: theme.colors.border, color: theme.colors.subtext }}
+                    >
+                        Current Rank
+                    </button>
                 </div>
 
                 {/* Lifetime Tier - RECOMMENDED */}
@@ -63,11 +68,11 @@ const Premium = ({ onBack, onPurchase }) => {
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                         <Crown className="w-5 h-5" style={{ color: theme.colors.accent }} />
-                        <h3 className="font-bold text-lg font-serif">Grand Maester</h3>
+                        <h3 className="font-bold text-lg font-serif" style={{ color: theme.colors.text }}>Grand Maester</h3>
                     </div>
                     <p className="text-2xl font-bold mb-1 font-serif" style={{ color: theme.colors.accent }}>$14.99</p>
-                    <p className="text-xs opacity-60 mb-3">One-time Offering</p>
-                    <ul className="space-y-2 mb-4">
+                    <p className="text-xs opacity-60 mb-3" style={{ color: theme.colors.subtext }}>One-time Offering</p>
+                    <ul className="space-y-2 mb-4" style={{ color: theme.colors.text }}>
                         <li className="flex items-start gap-2 text-sm">
                             <Check className="w-4 h-4 mt-0.5" style={{ color: theme.colors.accent }} />
                             <span className="font-bold">Unlimited Conversions</span>
@@ -84,7 +89,7 @@ const Premium = ({ onBack, onPurchase }) => {
                     <button
                         onClick={() => handlePurchase(TIERS.LIFETIME)}
                         className="w-full py-3 rounded-lg font-bold font-serif shadow-lg transition-transform active:scale-95"
-                        style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                        style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
                     >
                         Unlock Forever
                     </button>

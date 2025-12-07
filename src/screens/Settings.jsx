@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, Crown, User, Palette, Globe, BookOpen, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, Save, Crown, User, Palette, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import { TIERS } from '../utils/userTier';
@@ -26,7 +26,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
             case TIERS.PREMIUM:
                 return { name: 'Scholar', color: theme.colors.accent };
             default:
-                return { name: 'Novice', color: theme.colors.secondary };
+                return { name: 'Novice', color: theme.colors.subtext };
         }
     };
 
@@ -38,12 +38,12 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
             <div className="flex items-center gap-4 border-b pb-4" style={{ borderColor: theme.colors.border }}>
                 <button
                     onClick={onBack}
-                    className="p-2 rounded-full hover:bg-black/5 transition-colors"
+                    className="p-2 rounded-full hover:opacity-70 transition-colors"
                     style={{ color: theme.colors.text }}
                 >
                     <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h2 className="text-2xl font-serif font-bold">Library Settings</h2>
+                <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Library Settings</h2>
             </div>
 
             <motion.div
@@ -54,7 +54,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 {/* Profile Section */}
                 <div className="p-4 rounded-xl border flex items-center gap-4" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
                     <div className="w-16 h-16 rounded-full flex items-center justify-center border-2" style={{ backgroundColor: `${theme.colors.accent}20`, borderColor: theme.colors.accent }}>
-                        <User size={32} color={theme.colors.accent} />
+                        <User size={32} style={{ color: theme.colors.accent }} />
                     </div>
                     <div className="flex-1">
                         {isEditingName ? (
@@ -65,17 +65,19 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                                 onBlur={() => setIsEditingName(false)}
                                 autoFocus
                                 className="bg-transparent border-b border-current font-serif font-bold text-lg w-full focus:outline-none"
+                                style={{ color: theme.colors.text }}
                             />
                         ) : (
                             <h3
                                 onClick={() => setIsEditingName(true)}
                                 className="font-serif font-bold text-lg cursor-pointer hover:opacity-70"
+                                style={{ color: theme.colors.text }}
                             >
                                 {name || 'Unknown Traveler'}
                             </h3>
                         )}
                         <div className="flex items-center gap-2 text-sm opacity-70">
-                            <Crown size={14} color={tierDisplay.color} />
+                            <Crown size={14} style={{ color: tierDisplay.color }} />
                             <span style={{ color: tierDisplay.color }}>{tierDisplay.name}</span>
                         </div>
                     </div>
@@ -83,7 +85,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
 
                 {/* Theme Selector */}
                 <div className="space-y-3">
-                    <h3 className="font-serif font-bold flex items-center gap-2">
+                    <h3 className="font-serif font-bold flex items-center gap-2" style={{ color: theme.colors.text }}>
                         <Palette size={18} /> Atmosphere
                     </h3>
                     <div className="grid grid-cols-3 gap-2">
@@ -99,7 +101,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                                     color: t.colors.text
                                 }}
                             >
-                                <div className="w-full h-8 rounded bg-current opacity-20" />
+                                <div className="w-full h-8 rounded opacity-50" style={{ backgroundColor: t.colors.accent }} />
                                 <span className="text-xs font-bold">{t.name.split(' ')[0]}</span>
                             </button>
                         ))}
@@ -108,16 +110,17 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
 
                 {/* Kindle Email */}
                 <div className="space-y-3">
-                    <h3 className="font-serif font-bold flex items-center gap-2">
+                    <h3 className="font-serif font-bold flex items-center gap-2" style={{ color: theme.colors.text }}>
                         <BookOpen size={18} /> Kindle Owl
                     </h3>
                     <div className="p-4 rounded-xl border" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
-                        <label className="block text-xs opacity-70 mb-1">Destination Address</label>
+                        <label className="block text-xs opacity-70 mb-1" style={{ color: theme.colors.subtext }}>Destination Address</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-transparent border-b border-current py-2 focus:outline-none font-mono text-sm"
+                            className="w-full bg-transparent border-b py-2 focus:outline-none font-mono text-sm"
+                            style={{ color: theme.colors.text, borderColor: theme.colors.subtext }}
                             placeholder="username@kindle.com"
                         />
                     </div>
@@ -129,19 +132,19 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                         <p className="text-2xl font-serif font-bold" style={{ color: theme.colors.accent }}>
                             {user.stats?.booksConverted || 0}
                         </p>
-                        <p className="text-xs opacity-70">Tomes Converted</p>
+                        <p className="text-xs opacity-70" style={{ color: theme.colors.subtext }}>Tomes Converted</p>
                     </div>
                     <div className="p-4 rounded-xl border text-center" style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border }}>
                         <p className="text-2xl font-serif font-bold" style={{ color: theme.colors.accent }}>
                             {user.stats?.pagesRead || 0}
                         </p>
-                        <p className="text-xs opacity-70">Pages Turned</p>
+                        <p className="text-xs opacity-70" style={{ color: theme.colors.subtext }}>Pages Turned</p>
                     </div>
                 </div>
 
                 {/* Version */}
-                <div className="text-center opacity-40 text-xs pt-4 font-mono">
-                    v2.0.0 (Dark Academia)
+                <div className="text-center opacity-40 text-xs pt-4 font-mono" style={{ color: theme.colors.subtext }}>
+                    v2.1.0 (Enchanted)
                 </div>
             </motion.div>
 
@@ -149,7 +152,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 <button
                     onClick={handleSave}
                     className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
-                    style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                    style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
                 >
                     <Save size={20} />
                     Save Changes

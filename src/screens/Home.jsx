@@ -28,10 +28,10 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-2"
             >
-                <h1 className="text-4xl font-serif font-bold" style={{ color: theme.colors.accent }}>
+                <h1 className="text-4xl font-serif font-bold" style={{ color: theme.colors.text }}>
                     Good evening, {user.name || 'Traveler'}.
                 </h1>
-                <p className="italic opacity-70 font-serif text-lg">
+                <p className="italic font-serif text-lg" style={{ color: theme.colors.subtext }}>
                     The library is open for your contributions.
                 </p>
             </motion.div>
@@ -45,12 +45,13 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                     className="p-4 rounded-lg border flex items-center justify-between"
                     style={{
                         backgroundColor: theme.colors.card,
-                        borderColor: theme.colors.border
+                        borderColor: theme.colors.border,
+                        color: theme.colors.text
                     }}
                 >
                     <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-black/10">
-                            <Sparkles size={20} color={theme.colors.accent} />
+                        <div className="p-2 rounded-full" style={{ backgroundColor: `${theme.colors.accent}20` }}>
+                            <Sparkles size={20} style={{ color: theme.colors.accent }} />
                         </div>
                         <div>
                             <p className="font-bold font-serif">Ink Remaining</p>
@@ -90,13 +91,13 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
 
                         <div
                             className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:rotate-12"
-                            style={{ backgroundColor: theme.colors.accent }}
+                            style={{ backgroundColor: theme.colors.button }}
                         >
-                            <Feather size={40} color={theme.colors.bg} />
+                            <Feather size={40} style={{ color: theme.colors.buttonText }} />
                         </div>
                         <div className="text-center">
-                            <h3 className="text-2xl font-serif font-bold mb-1">Convert New Tome</h3>
-                            <p className="opacity-60 text-sm">Select a PDF from your archives</p>
+                            <h3 className="text-2xl font-serif font-bold mb-1" style={{ color: theme.colors.text }}>Convert New Tome</h3>
+                            <p className="text-sm" style={{ color: theme.colors.subtext }}>Select a PDF from your archives</p>
                         </div>
                     </div>
                 </label>
@@ -110,11 +111,14 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                 className="pt-4 border-t opacity-50"
                 style={{ borderColor: theme.colors.border }}
             >
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3" style={{ color: theme.colors.subtext }}>
                     <Book size={16} />
                     <span className="font-serif font-bold text-sm">Recent Additions</span>
                 </div>
-                <div className="h-24 rounded-lg border border-dashed flex items-center justify-center text-sm italic" style={{ borderColor: theme.colors.border }}>
+                <div
+                    className="h-24 rounded-lg border border-dashed flex items-center justify-center text-sm italic"
+                    style={{ borderColor: theme.colors.border, color: theme.colors.subtext }}
+                >
                     Your shelf is waiting for new stories...
                 </div>
             </motion.div>
