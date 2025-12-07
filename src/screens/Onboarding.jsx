@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
-import { ChevronRight, BookOpen, Palette, User, Check } from 'lucide-react';
+import { ChevronRight, BookOpen, Palette, User, Check, Share2 } from 'lucide-react';
 
 const GENRES = [
     'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller',
     'Horror', 'Historical', 'Non-Fiction', 'Classics', 'Poetry'
+];
+
+const SOURCES = [
+    'Friends', 'TikTok', 'YouTube', 'Instagram', 'Twitter', 'Other'
 ];
 
 const Onboarding = ({ onComplete }) => {
@@ -15,13 +19,19 @@ const Onboarding = ({ onComplete }) => {
 
     const [name, setName] = useState('');
     const [selectedGenres, setSelectedGenres] = useState([]);
+    const [source, setSource] = useState('');
+    const [otherSource, setOtherSource] = useState('');
 
     const handleNext = () => {
-        if (step < 3) setStep(step + 1);
+        if (step < 4) setStep(step + 1);
         else handleFinish();
     };
 
     const handleFinish = () => {
+        const finalSource = source === 'Other' ? otherSource : source;
+        // In a real app, we would send finalSource to an analytics backend here
+        console.log('User Source:', finalSource);
+
         completeOnboarding(name, selectedGenres);
         if (onComplete) onComplete();
     };
@@ -83,8 +93,8 @@ const Onboarding = ({ onComplete }) => {
                                     key={genre}
                                     onClick={() => toggleGenre(genre)}
                                     className={`px-4 py-2 rounded-full border transition-all ${selectedGenres.includes(genre)
-                                            ? 'font-bold'
-                                            : 'bg-transparent opacity-60 hover:opacity-100'
+                                        ? 'font-bold'
+                                        : 'bg-transparent opacity-60 hover:opacity-100'
                                         }`}
                                     style={{
                                         backgroundColor: selectedGenres.includes(genre) ? theme.colors.accent : 'transparent',
@@ -99,7 +109,48 @@ const Onboarding = ({ onComplete }) => {
                     </div>
                 );
 
-            case 3: // Theme
+            case 3: // Source (New Step)
+                return (
+                    <div className="space-y-6 animate-fadeIn w-full">
+                        <div className="text-center">
+                            <Share2 size={48} className="mx-auto mb-4" style={{ color: theme.colors.accent }} />
+                            <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Discovery</h2>
+                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>How did you find this hidden library?</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            {SOURCES.map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => setSource(s)}
+                                    className={`p-3 rounded-xl border transition-all ${source === s
+                                        ? 'font-bold shadow-md scale-105'
+                                        : 'bg-transparent opacity-60 hover:opacity-100'
+                                        }`}
+                                    style={{
+                                        backgroundColor: source === s ? theme.colors.accent : 'transparent',
+                                        color: source === s ? theme.colors.bg : theme.colors.text,
+                                        borderColor: theme.colors.accent
+                                    }}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                        {source === 'Other' && (
+                            <input
+                                type="text"
+                                value={otherSource}
+                                onChange={(e) => setOtherSource(e.target.value)}
+                                placeholder="Please specify..."
+                                className="w-full bg-transparent border-b p-2 text-center focus:outline-none animate-fadeIn"
+                                style={{ borderColor: theme.colors.accent, color: theme.colors.text }}
+                                autoFocus
+                            />
+                        )}
+                    </div>
+                );
+
+            case 4: // Theme
                 return (
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
@@ -113,8 +164,8 @@ const Onboarding = ({ onComplete }) => {
                                     key={t.id}
                                     onClick={() => setTheme(t.id)}
                                     className={`p-4 rounded-lg border-2 flex items-center justify-between transition-all ${theme.id === t.id
-                                            ? 'shadow-lg scale-105'
-                                            : 'hover:opacity-80'
+                                        ? 'shadow-lg scale-105'
+                                        : 'hover:opacity-80'
                                         }`}
                                     style={{
                                         backgroundColor: t.colors.bg,
@@ -140,7 +191,7 @@ const Onboarding = ({ onComplete }) => {
 
             {/* Progress Dots */}
             <div className="absolute top-10 flex gap-2">
-                {[0, 1, 2, 3].map(i => (
+                {[0, 1, 2, 3, 4].map(i => (
                     <div
                         key={i}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${i === step ? 'w-6' : 'opacity-20'
@@ -156,11 +207,11 @@ const Onboarding = ({ onComplete }) => {
 
             <button
                 onClick={handleNext}
-                disabled={step === 1 && !name.trim()}
+                disabled={(step === 1 && !name.trim()) || (step === 3 && !source) || (step === 3 && source === 'Other' && !otherSource.trim())}
                 className="mb-10 flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
             >
-                {step === 3 ? 'Enter Library' : 'Continue'}
+                {step === 4 ? 'Enter Library' : 'Continue'}
                 <ChevronRight size={20} />
             </button>
         </div>

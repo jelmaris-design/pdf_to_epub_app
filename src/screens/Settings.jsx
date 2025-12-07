@@ -162,7 +162,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 </div>
 
                 {/* Premium Plans Access */}
-                <div className="pt-2 space-y-3">
+                <div className="pt-2">
                     <button
                         onClick={onNavigatePremium}
                         className="w-full p-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
@@ -175,24 +175,6 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                         <Crown size={18} />
                         View Grimoire Plans
                     </button>
-
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleResetToFree}
-                            className="flex-1 py-2 text-xs border rounded opacity-50 hover:opacity-100"
-                            style={{ color: theme.colors.subtext, borderColor: theme.colors.subtext }}
-                        >
-                            [Debug] Reset to Free
-                        </button>
-                        <button
-                            onClick={handleClearData}
-                            className="flex-1 py-2 text-xs border rounded opacity-50 hover:opacity-100 flex items-center justify-center gap-1"
-                            style={{ color: '#ef4444', borderColor: '#ef4444' }}
-                        >
-                            <Trash2 size={12} />
-                            Clear Data
-                        </button>
-                    </div>
                 </div>
             </motion.div>
 
