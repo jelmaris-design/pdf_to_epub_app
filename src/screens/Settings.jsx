@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, Crown, User, Palette, BookOpen } from 'lucide-react';
+import { ArrowLeft, Save, Crown, User, Palette, BookOpen, Trash2, CheckCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
-import { TIERS } from '../utils/userTier';
-import { motion } from 'framer-motion';
+import { TIERS, setUserTier } from '../utils/userTier';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium }) => {
     const { theme, setTheme, themes } = useTheme();
@@ -12,11 +12,25 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
     const [email, setEmail] = useState(savedEmail || '');
     const [name, setName] = useState(user.name || '');
     const [isEditingName, setIsEditingName] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleSave = () => {
         onSaveEmail(email);
         updateUser({ name });
-        onBack();
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2000);
+    };
+
+    const handleResetToFree = () => {
+        setUserTier(TIERS.FREE);
+        window.location.reload();
+    };
+
+    const handleClearData = () => {
+        if (confirm('Are you sure? This will reset all app data, including your conversion history.')) {
+            localStorage.clear();
+            window.location.reload();
+        }
     };
 
     const getTierDisplay = () => {
@@ -33,7 +47,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
     const tierDisplay = getTierDisplay();
 
     return (
-        <div className="flex flex-col gap-6 pb-32">
+        <div className="flex flex-col gap-6 pb-32 relative">
             {/* Header */}
             <div className="flex items-center gap-4 border-b pb-4" style={{ borderColor: theme.colors.border }}>
                 <button
@@ -162,21 +176,41 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                         View Grimoire Plans
                     </button>
 
-                    <button
-                        onClick={() => {
-                            const { setUserTier, TIERS } = require('../utils/userTier');
-                            setUserTier(TIERS.FREE);
-                            window.location.reload();
-                        }}
-                        className="w-full text-xs underline opacity-50 hover:opacity-100 text-center"
-                        style={{ color: theme.colors.subtext }}
-                    >
-                        [Debug] Reset to Free Tier
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleResetToFree}
+                            className="flex-1 py-2 text-xs border rounded opacity-50 hover:opacity-100"
+                            style={{ color: theme.colors.subtext, borderColor: theme.colors.subtext }}
+                        >
+                            [Debug] Reset to Free
+                        </button>
+                        <button
+                            onClick={handleClearData}
+                            className="flex-1 py-2 text-xs border rounded opacity-50 hover:opacity-100 flex items-center justify-center gap-1"
+                            style={{ color: '#ef4444', borderColor: '#ef4444' }}
+                        >
+                            <Trash2 size={12} />
+                            Clear Data
+                        </button>
+                    </div>
                 </div>
             </motion.div>
 
-            <div className="fixed bottom-6 left-0 right-0 px-6">
+            <div className="fixed bottom-6 left-0 right-0 px-6 z-20">
+                <AnimatePresence>
+                    {showSuccess && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            className="absolute -top-16 left-0 right-0 mx-6 p-3 rounded-lg shadow-lg flex items-center justify-center gap-2 font-bold"
+                            style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                        >
+                            <CheckCircle size={20} />
+                            Changes Saved!
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <button
                     onClick={handleSave}
                     className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
