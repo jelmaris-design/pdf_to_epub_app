@@ -1,0 +1,5 @@
+{
+  "appId": "com.pdftoepub.app",
+  "appName": "PDF to EPUB",
+  "webDir": "dist"
+}
