@@ -2,6 +2,7 @@
 const sgMail = require('@sendgrid/mail');
 
 export default async function handler(req, res) {
+    console.log('API Handler Initialized');
     // Add CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
