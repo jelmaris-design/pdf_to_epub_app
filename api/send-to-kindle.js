@@ -21,20 +21,17 @@ export default async function handler(req, res) {
     try {
         const { recipientEmail, fileName, fileData, title, author } = req.body;
 
-        // Validate inputs
         if (!recipientEmail || !fileName || !fileData) {
             return res.status(400).json({
                 error: 'Missing required fields: recipientEmail, fileName, fileData'
             });
         }
 
-        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(recipientEmail)) {
             return res.status(400).json({ error: 'Invalid email format' });
         }
 
-        // Set SendGrid API key
         const apiKey = process.env.SENDGRID_API_KEY;
         const fromEmail = process.env.FROM_EMAIL || 'noreply@pdftoepub.app';
 
@@ -46,7 +43,6 @@ export default async function handler(req, res) {
 
         sgMail.setApiKey(apiKey);
 
-        // Prepare email
         const msg = {
             to: recipientEmail,
             from: fromEmail,
@@ -63,7 +59,6 @@ export default async function handler(req, res) {
             ]
         };
 
-        // Send email
         await sgMail.send(msg);
 
         return res.status(200).json({
