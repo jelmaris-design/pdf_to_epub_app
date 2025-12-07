@@ -19,6 +19,8 @@ import {
   getRemainingConversions
 } from './utils/userTier';
 
+import KindleInstructionModal from './components/KindleInstructionModal';
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [pdfFile, setPdfFile] = useState(null);
@@ -28,6 +30,8 @@ function App() {
   const [userTier, setUserTierState] = useState(getUserTier());
   const [showAds, setShowAds] = useState(getTierLimits().showAds);
   const [isSending, setIsSending] = useState(false);
+  const [showKindleModal, setShowKindleModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
 
   useEffect(() => {
     const tier = getUserTier();
@@ -79,7 +83,7 @@ function App() {
     }
   };
 
-  const handleSendToKindle = async (email) => {
+  const handleSendToKindleClick = (email) => {
     const targetEmail = email || savedEmail;
 
     if (!epubBlob) {
@@ -93,7 +97,14 @@ function App() {
       return;
     }
 
+    setPendingEmail(targetEmail);
+    setShowKindleModal(true);
+  };
+
+  const handleConfirmSend = async () => {
+    setShowKindleModal(false);
     setIsSending(true);
+    const targetEmail = pendingEmail;
 
     try {
       // Call backend API to send email
@@ -162,7 +173,7 @@ function App() {
         return (
           <Result
             onBack={() => setCurrentScreen('home')}
-            onSendToKindle={handleSendToKindle}
+            onSendToKindle={handleSendToKindleClick}
             onDownload={handleDownload}
             savedEmail={savedEmail}
             isSending={isSending}
@@ -212,6 +223,12 @@ function App() {
       onOpenSettings={() => setCurrentScreen('settings')}
     >
       {renderScreen()}
+
+      <KindleInstructionModal
+        isOpen={showKindleModal}
+        onClose={() => setShowKindleModal(false)}
+        onConfirm={handleConfirmSend}
+      />
     </Layout>
   );
 }
