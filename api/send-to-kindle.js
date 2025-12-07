@@ -55,7 +55,7 @@ export default async function handler(req, res) {
             html: `<p><strong>${title || 'Book'}</strong> by ${author || 'Unknown'}</p><p>EPUB file attached.</p>`,
             attachments: [
                 {
-                    content: fileData, // base64 string
+                    content: fileData,
                     filename: fileName,
                     type: 'application/epub+zip',
                     disposition: 'attachment'
