@@ -3,6 +3,7 @@ const sgMail = require('@sendgrid/mail');
 
 export default async function handler(req, res) {
     console.log('API Handler Initialized');
+
     // Add CORS headers
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,58 +31,27 @@ export default async function handler(req, res) {
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(recipientEmail)) {
-            // Vercel Serverless Function: Send to Kindle
-            const sgMail = require('@sendgrid/mail');
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
 
-            export default async function handler(req, res) {
-                console.log('API Handler Initialized');
-                // Add CORS headers
-                res.setHeader('Access-Control-Allow-Credentials', 'true');
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-                res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+        const apiKey = process.env.SENDGRID_API_KEY;
+        const fromEmail = process.env.FROM_EMAIL || 'noreply@pdftoepub.app';
 
-                // Handle OPTIONS request
-                if (req.method === 'OPTIONS') {
-                    return res.status(200).end();
-                }
+        if (!apiKey) {
+            console.error('SendGrid API key missing');
+            return res.status(500).json({
+                error: 'Server configuration error'
+            });
+        }
 
-                // Only allow POST
-                if (req.method !== 'POST') {
-                    return res.status(405).json({ error: 'Method not allowed' });
-                }
+        sgMail.setApiKey(apiKey);
 
-                try {
-                    const { recipientEmail, fileName, fileData, title, author } = req.body;
-
-                    if (!recipientEmail || !fileName || !fileData) {
-                        return res.status(400).json({
-                            error: 'Missing required fields: recipientEmail, fileName, fileData'
-                        });
-                    }
-
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(recipientEmail)) {
-                        return res.status(400).json({ error: 'Invalid email format' });
-                    }
-
-                    const apiKey = process.env.SENDGRID_API_KEY;
-                    const fromEmail = process.env.FROM_EMAIL || 'noreply@pdftoepub.app';
-
-                    if (!apiKey) {
-                        return res.status(500).json({
-                            error: 'SendGrid API key not configured'
-                        });
-                    }
-
-                    sgMail.setApiKey(apiKey);
-
-                    const msg = {
-                        to: recipientEmail,
-                        from: fromEmail,
-                        subject: `[Kindle] ${title || 'New Book'}`,
-                        text: `Here is your book: ${title || 'Unknown Title'}\nBy: ${author || 'Unknown Author'}\n\nPlease ensure ${fromEmail} is in your Approved Personal Document E-mail List on Amazon.`,
-                        html: `
+        const msg = {
+            to: recipientEmail,
+            from: fromEmail,
+            subject: `[Kindle] ${title || 'New Book'}`,
+            text: `Here is your book: ${title || 'Unknown Title'}\nBy: ${author || 'Unknown Author'}\n\nPlease ensure ${fromEmail} is in your Approved Personal Document E-mail List on Amazon.`,
+            html: `
             <!DOCTYPE html>
             <html>
             <head>
@@ -114,33 +84,35 @@ export default async function handler(req, res) {
             </body>
             </html>
             `,
-                        attachments: [
-                            {
-                                content: fileData,
-                                filename: fileName,
-                                type: 'application/epub+zip',
-                                disposition: 'attachment'
-                            }
-                        ]
-                    };
-
-                    await sgMail.send(msg);
-
-                    return res.status(200).json({
-                        success: true,
-                        message: `EPUB sent to ${recipientEmail}`
-                    });
-
-                } catch (error) {
-                    console.error('SendGrid error:', error);
-
-                    if (error.response) {
-                        console.error('SendGrid response:', error.response.body);
-                    }
-
-                    return res.status(500).json({
-                        error: 'Failed to send email',
-                        details: error.message
-                    });
+            attachments: [
+                {
+                    content: fileData,
+                    filename: fileName,
+                    type: 'application/epub+zip',
+                    disposition: 'attachment'
                 }
-            }
+            ]
+        };
+
+        console.log('Sending email to:', recipientEmail);
+        await sgMail.send(msg);
+        console.log('Email sent successfully');
+
+        return res.status(200).json({
+            success: true,
+            message: `EPUB sent to ${recipientEmail}`
+        });
+
+    } catch (error) {
+        console.error('SendGrid error:', error);
+
+        if (error.response) {
+            console.error('SendGrid response:', error.response.body);
+        }
+
+        return res.status(500).json({
+            error: 'Failed to send email',
+            details: error.message
+        });
+    }
+}
