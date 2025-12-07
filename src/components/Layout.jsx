@@ -74,7 +74,7 @@ const Layout = ({ children, showAds, onRemoveAds, onOpenSettings }) => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto p-4 relative">
-                <div className="max-w-md mx-auto h-full">
+                <div className="max-w-md mx-auto min-h-full pb-20">
                     {children}
                 </div>
             </main>

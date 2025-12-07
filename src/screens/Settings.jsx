@@ -33,7 +33,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
     const tierDisplay = getTierDisplay();
 
     return (
-        <div className="flex flex-col h-full gap-6 pb-20">
+        <div className="flex flex-col gap-6 pb-32">
             {/* Header */}
             <div className="flex items-center gap-4 border-b pb-4" style={{ borderColor: theme.colors.border }}>
                 <button
@@ -142,39 +142,14 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                     </div>
                 </div>
 
-                {/* Version */}
-                <div className="text-center opacity-40 text-xs pt-4 font-mono" style={{ color: theme.colors.subtext }}>
-                    v2.1.0 (Enchanted)
-                </div>
-
-                {/* Premium Plans Access */}
-                <div className="pt-2">
-                    <button
-                        onClick={onNavigatePremium}
-                        className="w-full p-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
-                        style={{
-                            borderColor: theme.colors.accent,
-                            color: theme.colors.accent,
-                            backgroundColor: `${theme.colors.accent}10`
-                        }}
-                    >
-                        <Crown size={18} />
-                        View Grimoire Plans
-                    </button>
-                </div>
-            </motion.div>
-
-            <div className="fixed bottom-6 left-0 right-0 px-6">
-                <button
-                    onClick={handleSave}
-                    className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
-                    style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
+                className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+                style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
                 >
-                    <Save size={20} />
-                    Save Changes
-                </button>
-            </div>
+                <Save size={20} />
+                Save Changes
+            </button>
         </div>
+        </div >
     );
 };
 
