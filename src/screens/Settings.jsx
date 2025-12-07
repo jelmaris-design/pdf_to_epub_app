@@ -146,6 +146,34 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 <div className="text-center opacity-40 text-xs pt-4 font-mono" style={{ color: theme.colors.subtext }}>
                     v2.1.0 (Enchanted)
                 </div>
+
+                {/* Debug / Testing Actions */}
+                <div className="flex flex-col gap-2 pt-4">
+                    <button
+                        onClick={() => {
+                            const { setUserTier, TIERS } = require('../utils/userTier');
+                            setUserTier(TIERS.FREE);
+                            window.location.reload();
+                        }}
+                        className="text-xs underline opacity-50 hover:opacity-100"
+                        style={{ color: theme.colors.subtext }}
+                    >
+                        [Debug] Reset to Free Tier
+                    </button>
+
+                    <button
+                        onClick={onNavigatePremium}
+                        className="p-3 rounded-xl border-2 font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
+                        style={{
+                            borderColor: theme.colors.accent,
+                            color: theme.colors.accent,
+                            backgroundColor: `${theme.colors.accent}10`
+                        }}
+                    >
+                        <Crown size={18} />
+                        View Premium Plans
+                    </button>
+                </div>
             </motion.div>
 
             <div className="fixed bottom-6 left-0 right-0 px-6">
