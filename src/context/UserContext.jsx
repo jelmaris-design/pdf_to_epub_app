@@ -8,8 +8,10 @@ export const UserProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : {
             name: '',
             genres: [],
+            source: '', // New field
+            otherSource: '', // New field
             isOnboarded: false,
-            photo: null, // Base64 string or null
+            photo: null,
             stats: {
                 booksConverted: 0,
                 pagesRead: 0
@@ -25,16 +27,35 @@ export const UserProvider = ({ children }) => {
         setUser(prev => ({ ...prev, ...updates }));
     };
 
-    const completeOnboarding = (name, genres) => {
+    const completeOnboarding = (name, genres, source, otherSource) => {
         updateUser({
             name,
             genres,
+            source,
+            otherSource,
             isOnboarded: true
         });
     };
 
+    const resetData = () => {
+        localStorage.clear();
+        setUser({
+            name: '',
+            genres: [],
+            source: '',
+            otherSource: '',
+            isOnboarded: false,
+            photo: null,
+            stats: {
+                booksConverted: 0,
+                pagesRead: 0
+            }
+        });
+        window.location.reload();
+    };
+
     return (
-        <UserContext.Provider value={{ user, updateUser, completeOnboarding }}>
+        <UserContext.Provider value={{ user, updateUser, completeOnboarding, resetData }}>
             {children}
         </UserContext.Provider>
     );

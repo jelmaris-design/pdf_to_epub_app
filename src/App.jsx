@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import Layout from './components/Layout';
 import Home from './screens/Home';
 import Editor from './screens/Editor';
@@ -41,7 +42,20 @@ function App() {
     const tier = getUserTier();
     setUserTierState(tier);
     setShowAds(getTierLimits(tier).showAds);
-  }, []);
+
+    // Handle Android Hardware Back Button
+    const backButtonListener = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      if (currentScreen === 'home') {
+        CapacitorApp.exitApp();
+      } else {
+        setCurrentScreen('home');
+      }
+    });
+
+    return () => {
+      backButtonListener.then(handler => handler.remove());
+    };
+  }, [currentScreen]);
 
   if (!user.isOnboarded) {
     return <Onboarding />;

@@ -32,7 +32,7 @@ const Onboarding = ({ onComplete }) => {
         // In a real app, we would send finalSource to an analytics backend here
         console.log('User Source:', finalSource);
 
-        completeOnboarding(name, selectedGenres);
+        completeOnboarding(name, selectedGenres, source, otherSource);
         if (onComplete) onComplete();
     };
 

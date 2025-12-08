@@ -96,15 +96,15 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                         <div className="flex items-center gap-4">
                             <div className="relative">
                                 {/* Ink Bottle Visual */}
-                                <div className="w-12 h-12 rounded-full border-2 flex items-center justify-center overflow-hidden" style={{ borderColor: theme.colors.accent, backgroundColor: `${theme.colors.bg}` }}>
+                                <div className="w-12 h-12 rounded-full border-2 flex items-end justify-center overflow-hidden relative bg-black/5" style={{ borderColor: theme.colors.accent }}>
                                     <motion.div
-                                        className="absolute bottom-0 left-0 right-0 w-full"
+                                        className="w-full absolute bottom-0"
                                         style={{ backgroundColor: theme.colors.accent }}
                                         initial={{ height: '0%' }}
                                         animate={{ height: `${(remainingConversions / 10) * 100}%` }}
                                         transition={{ duration: 1.5, ease: "easeOut" }}
                                     />
-                                    <Sparkles size={20} className="relative z-10" style={{ color: remainingConversions > 0 ? theme.colors.bg : theme.colors.subtext }} />
+                                    <Sparkles size={20} className="relative z-10 mb-3" style={{ color: remainingConversions > 5 ? theme.colors.bg : theme.colors.subtext }} />
                                 </div>
                                 <motion.div
                                     className="absolute -top-1 -right-1"
