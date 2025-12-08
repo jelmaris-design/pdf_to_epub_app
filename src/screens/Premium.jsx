@@ -1,10 +1,10 @@
 import React from 'react';
-import { ArrowLeft, Check, Crown, Sparkles, Infinity, Shield, Zap } from 'lucide-react';
+import { ArrowLeft, Check, Crown, Sparkles, Infinity, Shield, Zap, Circle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { setUserTier, TIERS } from '../utils/userTier';
 import { useTheme } from '../context/ThemeContext';
 
-const Premium = ({ onBack, onPurchase }) => {
+const Premium = ({ onBack, onPurchase, userTier }) => {
     const { theme } = useTheme();
 
     const handlePurchase = (tier, price) => {
@@ -32,15 +32,37 @@ const Premium = ({ onBack, onPurchase }) => {
 
             <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-4">
 
-                {/* Monthly */}
+                {/* Free Plan (Read Only) */}
                 <div
-                    onClick={() => handlePurchase(TIERS.PREMIUM, '$2.99/mo')}
-                    className="p-4 rounded-xl border flex items-center justify-between cursor-pointer active:scale-98 transition-transform"
+                    className="p-4 rounded-xl border flex items-center justify-between opacity-80"
                     style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border, color: theme.colors.text }}
                 >
                     <div>
-                        <h3 className="font-bold text-lg">Monthly</h3>
+                        <h3 className="font-bold text-lg flex items-center gap-2">
+                            Free
+                            {userTier === TIERS.FREE && <span className="text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full">Current</span>}
+                        </h3>
+                        <p className="text-sm opacity-60">10 Books / Month</p>
+                        <p className="text-xs opacity-50 mt-1">Max 30 with Rewarded Ads</p>
+                    </div>
+                    <div className="text-right">
+                        <span className="font-bold text-xl">$0</span>
+                    </div>
+                </div>
+
+                {/* Monthly */}
+                <div
+                    onClick={() => handlePurchase(TIERS.PREMIUM, '$2.99/mo')}
+                    className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer active:scale-98 transition-transform ${userTier === TIERS.PREMIUM ? 'ring-2 ring-blue-500' : ''}`}
+                    style={{ backgroundColor: theme.colors.card, borderColor: theme.colors.border, color: theme.colors.text }}
+                >
+                    <div>
+                        <h3 className="font-bold text-lg flex items-center gap-2">
+                            Monthly
+                            {userTier === TIERS.PREMIUM && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Current</span>}
+                        </h3>
                         <p className="text-sm opacity-60">25 Books / Month</p>
+                        <p className="text-xs opacity-50 mt-1">Max 50 with Rewarded Ads</p>
                     </div>
                     <div className="text-right">
                         <span className="font-bold text-xl">$2.99</span>
@@ -68,7 +90,7 @@ const Premium = ({ onBack, onPurchase }) => {
                 {/* Lifetime */}
                 <div
                     onClick={() => handlePurchase(TIERS.LIFETIME, '$29.99')}
-                    className="p-6 rounded-xl border-2 cursor-pointer active:scale-98 transition-transform shadow-lg"
+                    className={`p-6 rounded-xl border-2 cursor-pointer active:scale-98 transition-transform shadow-lg ${userTier === TIERS.LIFETIME ? 'ring-2 ring-yellow-500' : ''}`}
                     style={{
                         background: `linear-gradient(135deg, ${theme.colors.card}, ${theme.colors.bg})`,
                         borderColor: '#eab308' // Yellow-500
@@ -106,6 +128,11 @@ const Premium = ({ onBack, onPurchase }) => {
                     <button className="w-full py-3 rounded-lg font-bold text-white shadow-md bg-gradient-to-r from-yellow-500 to-orange-600">
                         Get Lifetime Access
                     </button>
+                </div>
+
+                <div className="text-xs opacity-60 text-center px-4" style={{ color: theme.colors.subtext }}>
+                    <p><strong>Note:</strong> Premium plans remove bottom banner ads.</p>
+                    <p>Rewarded ads (for bonus conversions) remain available as an optional way to earn more rights.</p>
                 </div>
             </div>
         </div>

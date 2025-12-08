@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ArrowLeft, Upload, Settings, Book, Send } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const HowToUse = ({ onBack }) => {
     const { theme } = useTheme();
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = 0;
+        }
+    }, []);
 
     const Step = ({ number, icon: Icon, title, desc }) => (
         <div className="flex gap-4">
@@ -33,7 +40,7 @@ const HowToUse = ({ onBack }) => {
                 <h2 className="text-xl font-bold font-serif" style={{ color: theme.colors.text }}>How to Use</h2>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+            <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-8">
                 <Step
                     number="1"
                     icon={Settings}

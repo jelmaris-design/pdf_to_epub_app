@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ArrowLeft, Smartphone, Zap, Shield, Heart, Sparkles, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 
 const WhyUs = ({ onBack }) => {
     const { theme } = useTheme();
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = 0;
+        }
+    }, []);
 
     const reasons = [
         {
@@ -59,6 +66,7 @@ const WhyUs = ({ onBack }) => {
             </div>
 
             <motion.div
+                ref={containerRef}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="flex-1 overflow-y-auto space-y-3 pb-4"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Book, Sparkles, Feather, Star, Plus } from 'lucide-react';
+import { Upload, Book, Sparkles, Plus, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
@@ -18,7 +18,12 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
         }
     };
 
-    const isFree = userTier === TIERS.FREE;
+    const isFree = userTier === TIERS.FREE || userTier === TIERS.PREMIUM; // Show ink for limited plans
+    const maxConversions = userTier === TIERS.PREMIUM ? 25 : 10; // Base limits for visual calc (approx)
+    // Note: remainingConversions includes bonus, so it might exceed maxConversions. 
+    // We'll clamp the visual fill to 100%.
+
+    const fillPercentage = Math.min(100, (remainingConversions / maxConversions) * 100);
 
     // Floating animation variants
     const float = {
@@ -33,7 +38,7 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
     };
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden relative">
+        <div className="flex flex-col h-full relative overflow-hidden">
             {/* Background Ambient Glows */}
             <motion.div
                 className="absolute top-0 left-0 w-64 h-64 rounded-full blur-3xl opacity-10 pointer-events-none"
@@ -84,19 +89,27 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                     <Sparkles size={20} />
                 </button>
 
-                {/* Ink / Mana Status (Top Right) */}
+                {/* Ink Bottle Visual (Top Right) */}
                 {isFree && (
-                    <div className="flex flex-col items-end">
-                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 backdrop-blur-sm border" style={{ borderColor: theme.colors.accent }}>
-                            <Feather size={14} style={{ color: theme.colors.accent }} />
-                            <span className="font-bold text-sm" style={{ color: theme.colors.text }}>{remainingConversions}/10</span>
+                    <div className="flex flex-col items-center">
+                        <div className="w-8 h-10 rounded-b-xl rounded-t-md border-2 relative overflow-hidden bg-white/10 backdrop-blur-sm" style={{ borderColor: theme.colors.accent }}>
+                            <motion.div
+                                className="absolute bottom-0 left-0 right-0"
+                                style={{ backgroundColor: theme.colors.accent }}
+                                initial={{ height: '0%' }}
+                                animate={{ height: `${fillPercentage}%` }}
+                                transition={{ duration: 1.5, ease: "easeOut" }}
+                            />
+                            {/* Glass reflection effect */}
+                            <div className="absolute top-1 right-1 w-1 h-4 bg-white/30 rounded-full" />
                         </div>
+                        <span className="text-[10px] font-bold mt-1" style={{ color: theme.colors.text }}>{remainingConversions} Left</span>
                     </div>
                 )}
             </div>
 
             {/* Main Content - Centered */}
-            <div className="flex-1 flex flex-col justify-center items-center relative z-10 pb-20">
+            <div className="flex-1 flex flex-col justify-center items-center relative z-10 pb-10">
                 {/* Greeting */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

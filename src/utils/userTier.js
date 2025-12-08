@@ -8,20 +8,23 @@ const TIERS = {
 const TIER_LIMITS = {
     [TIERS.FREE]: {
         monthlyConversions: 10,
+        maxBonus: 20, // Total max 30
         maxFileSize: 50, // MB
         showAds: true,
         apiConversion: false
     },
     [TIERS.LIFETIME]: {
         monthlyConversions: Infinity,
+        maxBonus: 0,
         maxFileSize: Infinity,
         showAds: false,
         apiConversion: true
     },
-    [TIERS.PREMIUM]: {
-        monthlyConversions: Infinity,
+    [TIERS.PREMIUM]: { // Monthly Subscription
+        monthlyConversions: 25,
+        maxBonus: 25, // Total max 50
         maxFileSize: Infinity,
-        showAds: false,
+        showAds: false, // No banner ads
         apiConversion: true,
         cloudBackup: true,
         prioritySupport: true
@@ -31,6 +34,7 @@ const TIER_LIMITS = {
 const STORAGE_KEYS = {
     TIER: 'user_tier',
     CONVERSIONS: 'conversion_count',
+    BONUS: 'bonus_conversions',
     LAST_RESET: 'last_reset_date'
 };
 
@@ -52,6 +56,23 @@ export const getConversionCount = () => {
     return count ? parseInt(count, 10) : 0;
 };
 
+export const getBonusConversions = () => {
+    const count = localStorage.getItem(STORAGE_KEYS.BONUS);
+    return count ? parseInt(count, 10) : 0;
+};
+
+export const addBonusConversion = () => {
+    const tier = getUserTier();
+    const limits = getTierLimits(tier);
+    const currentBonus = getBonusConversions();
+
+    if (currentBonus < limits.maxBonus) {
+        localStorage.setItem(STORAGE_KEYS.BONUS, (currentBonus + 1).toString());
+        return true;
+    }
+    return false;
+};
+
 export const incrementConversionCount = () => {
     const current = getConversionCount();
     localStorage.setItem(STORAGE_KEYS.CONVERSIONS, (current + 1).toString());
@@ -60,6 +81,7 @@ export const incrementConversionCount = () => {
 
 export const resetConversionCount = () => {
     localStorage.setItem(STORAGE_KEYS.CONVERSIONS, '0');
+    localStorage.setItem(STORAGE_KEYS.BONUS, '0');
     localStorage.setItem(STORAGE_KEYS.LAST_RESET, new Date().toISOString());
 };
 
@@ -83,21 +105,29 @@ export const canConvert = () => {
     checkMonthlyReset();
     const tier = getUserTier();
     const limits = getTierLimits(tier);
-    const count = getConversionCount();
 
-    return count < limits.monthlyConversions;
+    if (limits.monthlyConversions === Infinity) return true;
+
+    const count = getConversionCount();
+    const bonus = getBonusConversions();
+    const totalLimit = limits.monthlyConversions + bonus;
+
+    return count < totalLimit;
 };
 
 export const getRemainingConversions = () => {
     const tier = getUserTier();
     const limits = getTierLimits(tier);
-    const count = getConversionCount();
 
     if (limits.monthlyConversions === Infinity) {
         return Infinity;
     }
 
-    return Math.max(0, limits.monthlyConversions - count);
+    const count = getConversionCount();
+    const bonus = getBonusConversions();
+    const totalLimit = limits.monthlyConversions + bonus;
+
+    return Math.max(0, totalLimit - count);
 };
 
 export { TIERS };

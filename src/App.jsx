@@ -12,6 +12,7 @@ import { generateEpub } from './utils/epubGenerator';
 import { convertPdfToEpubAPI, isAPIConfigured } from './services/conversionService';
 import { saveAs } from 'file-saver';
 import { sendToKindleAPI } from './services/apiService';
+import { extractPdfMetadata, extractPdfText } from './utils/pdfHelpers';
 import {
   getUserTier,
   getTierLimits,
@@ -62,15 +63,23 @@ function App() {
   }
 
   const handleFileSelect = async (file) => {
-    if (!canConvert()) {
-      alert('Aylık dönüştürme limitiniz doldu! Premium\'a geçerek sınırsız dönüştürme yapabilirsiniz.');
-      setCurrentScreen('premium');
-      return;
-    }
+    try {
+      if (!canConvert()) {
+        alert('Monthly conversion limit reached! Upgrade to Premium for more.');
+        setCurrentScreen('premium');
+        return;
+      }
 
-    setPdfFile(file);
-    const extracted = await extractPdfMetadata(file);
-    setCurrentScreen('edit');
+      setPdfFile(file);
+      // Show loading indicator or just transition
+      const extracted = await extractPdfMetadata(file);
+      setMetadata(extracted || { title: file.name.replace('.pdf', ''), author: 'Unknown' }); // Fallback if extraction fails
+      setCurrentScreen('edit');
+    } catch (error) {
+      console.error("Error selecting file:", error);
+      alert("Failed to read PDF file. Please try another one.");
+      // Stay on home screen
+    }
   };
 
   const handleConvertStart = async (data) => {
@@ -100,7 +109,7 @@ function App() {
       setCurrentScreen('result');
     } catch (error) {
       console.error("Conversion failed:", error);
-      alert("Dönüştürme başarısız. Lütfen tekrar deneyin.");
+      alert("Conversion failed. Please try again.");
       setCurrentScreen('home');
     }
   };
@@ -109,12 +118,12 @@ function App() {
     const targetEmail = email || savedEmail;
 
     if (!epubBlob) {
-      alert("EPUB dosyası bulunamadı. Lütfen önce dönüştürme yapın.");
+      alert("No EPUB file found.");
       return;
     }
 
     if (!targetEmail) {
-      alert("Lütfen Kindle email adresinizi ayarlardan ekleyin.");
+      alert("Please set your Kindle email in Settings.");
       setCurrentScreen('settings');
       return;
     }
@@ -132,20 +141,20 @@ function App() {
       // Call backend API to send email
       await sendToKindleAPI(epubBlob, metadata, targetEmail);
 
-      alert(`✅ Başarılı!\n\nEPUB dosyası ${targetEmail} adresine gönderildi.\n\nBirkaç dakika içinde Kindle'ınızda görünecektir.`);
+      alert(`✅ Success!\n\nEPUB sent to ${targetEmail}.\n\nIt should appear on your Kindle shortly.`);
       setIsSending(false);
     } catch (error) {
       console.error('Send to Kindle failed:', error);
       setIsSending(false);
 
       // Fallback to manual method
-      if (confirm(`❌ Otomatik gönderim başarısız oldu.\n\nHata: ${error.message}\n\nManuel olarak göndermek ister misiniz?`)) {
+      if (confirm(`❌ Automatic send failed.\n\nError: ${error.message}\n\nDo you want to send manually?`)) {
         // Download file and open email
         const fileName = `${metadata.title || 'book'}.epub`;
         saveAs(epubBlob, fileName);
 
         setTimeout(() => {
-          window.location.href = `mailto:${targetEmail}?subject=Convert&body=Lütfen indirilen EPUB dosyasını ekleyin.`;
+          window.location.href = `mailto:${targetEmail}?subject=Convert&body=Please find the attached EPUB.`;
         }, 500);
       }
     }
@@ -188,7 +197,7 @@ function App() {
         return (
           <div className="flex flex-col items-center justify-center h-full gap-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-500 font-medium">Dönüştürülüyor...</p>
+            <p className="text-gray-500 font-medium">Converting...</p>
           </div>
         );
       case 'result':
@@ -220,6 +229,7 @@ function App() {
           <Premium
             onBack={() => setCurrentScreen('settings')}
             onPurchase={handlePurchase}
+            userTier={userTier}
           />
         );
       case 'whyus':
