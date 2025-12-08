@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ChevronRight, User, Palette, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X, HelpCircle, Check } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowLeft, ChevronRight, User, Palette, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X, HelpCircle, Check, Share2, Camera, Save, CheckCircle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import { TIERS } from '../utils/userTier';
 import { motion, AnimatePresence } from 'framer-motion';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Share } from '@capacitor/share';
 
 const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium, onNavigateWhyUs }) => {
     const { theme, setTheme, themes } = useTheme();
@@ -13,15 +14,29 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
     const [email, setEmail] = useState(savedEmail || '');
     const [name, setName] = useState(user.name || '');
     const [showWhoAmI, setShowWhoAmI] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const fileInputRef = useRef(null);
 
-    const handleSaveEmail = (e) => {
-        setEmail(e.target.value);
-        onSaveEmail(e.target.value);
+    const handleSave = () => {
+        onSaveEmail(email);
+        updateUser({ name });
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2000);
     };
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-        updateUser({ name: e.target.value });
+    };
+
+    const handlePhotoUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                updateUser({ photo: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleLogOut = () => {
@@ -31,6 +46,19 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
     const handleDeleteData = () => {
         if (confirm('Are you sure? This will delete ALL your data (stats, preferences, tier) and reset the app to the beginning.')) {
             resetData();
+        }
+    };
+
+    const handleShare = async () => {
+        try {
+            await Share.share({
+                title: 'Grimoire PDF to EPUB',
+                text: 'Check out this magical app that converts PDFs to EPUBs for Kindle!',
+                url: 'https://example.com/app', // Replace with actual URL
+                dialogTitle: 'Share with friends',
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
         }
     };
 
@@ -74,24 +102,47 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Settings</h2>
             </div>
 
-            <div className="flex-1 overflow-y-auto pb-20">
+            <div className="flex-1 overflow-y-auto pb-32">
                 {/* Profile Section */}
                 <Section title="Profile">
                     <div className="p-4 flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center border-2" style={{ backgroundColor: `${theme.colors.accent}20`, borderColor: theme.colors.accent }}>
-                            <User size={32} style={{ color: theme.colors.accent }} />
+                        <div className="relative">
+                            <div
+                                className="w-20 h-20 rounded-full flex items-center justify-center border-2 overflow-hidden bg-cover bg-center"
+                                style={{
+                                    backgroundColor: `${theme.colors.accent}20`,
+                                    borderColor: theme.colors.accent,
+                                    backgroundImage: user.photo ? `url(${user.photo})` : 'none'
+                                }}
+                            >
+                                {!user.photo && <User size={32} style={{ color: theme.colors.accent }} />}
+                            </div>
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="absolute bottom-0 right-0 p-1.5 rounded-full shadow-md bg-white border"
+                                style={{ borderColor: theme.colors.border }}
+                            >
+                                <Camera size={14} className="text-black" />
+                            </button>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                            />
                         </div>
                         <div className="flex-1">
                             <input
                                 type="text"
                                 value={name}
                                 onChange={handleNameChange}
-                                className="bg-transparent font-serif font-bold text-lg w-full focus:outline-none"
+                                className="bg-transparent font-serif font-bold text-lg w-full focus:outline-none border-b border-transparent focus:border-current transition-colors"
                                 style={{ color: theme.colors.text }}
                                 placeholder="Your Name"
                             />
-                            <p className="text-sm opacity-60" style={{ color: theme.colors.subtext }}>
-                                {userTier === TIERS.FREE ? 'Novice Traveler' : 'Master Librarian'}
+                            <p className="text-sm opacity-60 mt-1" style={{ color: theme.colors.subtext }}>
+                                {userTier === TIERS.FREE ? 'Novice Traveler' : userTier === TIERS.PREMIUM ? 'Scholar' : 'Archmage'}
                             </p>
                         </div>
                     </div>
@@ -112,14 +163,14 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                         <input
                             type="email"
                             value={email}
-                            onChange={handleSaveEmail}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="username@kindle.com"
                             className="bg-transparent text-right text-sm focus:outline-none w-48"
                             style={{ color: theme.colors.subtext }}
                         />
                     </div>
 
-                    {/* New Theme Selector */}
+                    {/* Theme Selector */}
                     <div className="p-4">
                         <div className="flex items-center gap-3 mb-3">
                             <Palette size={20} style={{ color: theme.colors.accent }} />
@@ -162,10 +213,12 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                 {/* About & Support */}
                 <Section title="About">
                     <Item icon={HelpCircle} label="Why This App?" onClick={onNavigateWhyUs} />
+                    <Item icon={HelpCircle} label="How to Use" onClick={() => alert('Guide coming soon!')} />
+                    <Item icon={Share2} label="Share App" onClick={handleShare} />
                     <Item icon={User} label="Who am I?" onClick={() => setShowWhoAmI(true)} />
                     <Item icon={Instagram} label="Instagram" onClick={() => window.open('https://instagram.com', '_blank')} />
                     <Item icon={Play} label="TikTok" onClick={() => window.open('https://tiktok.com', '_blank')} />
-                    <Item icon={Mail} label="Feedback" onClick={() => window.open('mailto:support@example.com', '_blank')} />
+                    <Item icon={Mail} label="Feedback" onClick={() => window.open('mailto:jelmaris.studio@gmail.com?subject=FEEDBACK', '_blank')} />
                 </Section>
 
                 {/* Danger Zone */}
@@ -173,6 +226,37 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                     <Item icon={LogOut} label="Log Out" onClick={handleLogOut} />
                     <Item icon={Trash2} label="Delete My Data" isDestructive onClick={handleDeleteData} />
                 </Section>
+
+                {/* Version */}
+                <div className="text-center opacity-40 text-xs pb-4 font-mono" style={{ color: theme.colors.subtext }}>
+                    v2.6.0 (Archmage)
+                </div>
+            </div>
+
+            {/* Save Button (Sticky Bottom) */}
+            <div className="fixed bottom-6 left-0 right-0 px-6 z-20">
+                <AnimatePresence>
+                    {showSuccess && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            className="absolute -top-16 left-0 right-0 mx-6 p-3 rounded-lg shadow-lg flex items-center justify-center gap-2 font-bold"
+                            style={{ backgroundColor: theme.colors.accent, color: theme.colors.bg }}
+                        >
+                            <CheckCircle size={20} />
+                            Changes Saved!
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                <button
+                    onClick={handleSave}
+                    className="w-full py-4 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95"
+                    style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
+                >
+                    <Save size={20} />
+                    Save Changes
+                </button>
             </div>
 
             {/* Who Am I Modal */}
@@ -202,7 +286,6 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
 
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className="w-24 h-24 rounded-full overflow-hidden border-4" style={{ borderColor: theme.colors.accent }}>
-                                    {/* Placeholder for user image or avatar */}
                                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Developer" className="w-full h-full object-cover" />
                                 </div>
 

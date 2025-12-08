@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
-import { ChevronRight, BookOpen, Palette, User, Check, Share2 } from 'lucide-react';
+import { ChevronRight, BookOpen, Palette, User, Check, Share2, Sparkles } from 'lucide-react';
 
 const GENRES = [
     'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller',
@@ -23,15 +23,11 @@ const Onboarding = ({ onComplete }) => {
     const [otherSource, setOtherSource] = useState('');
 
     const handleNext = () => {
-        if (step < 4) setStep(step + 1);
+        if (step < 5) setStep(step + 1);
         else handleFinish();
     };
 
     const handleFinish = () => {
-        const finalSource = source === 'Other' ? otherSource : source;
-        // In a real app, we would send finalSource to an analytics backend here
-        console.log('User Source:', finalSource);
-
         completeOnboarding(name, selectedGenres, source, otherSource);
         if (onComplete) onComplete();
     };
@@ -46,7 +42,24 @@ const Onboarding = ({ onComplete }) => {
 
     const renderStep = () => {
         switch (step) {
-            case 0: // Welcome
+            case 0: // Intro / Purpose
+                return (
+                    <div className="text-center space-y-6 animate-fadeIn px-6">
+                        <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg">
+                            <Sparkles size={48} className="text-white" />
+                        </div>
+                        <h1 className="text-3xl font-serif font-bold" style={{ color: theme.colors.text }}>
+                            Grimoire
+                        </h1>
+                        <p className="text-lg opacity-80 leading-relaxed" style={{ color: theme.colors.subtext }}>
+                            Transform your PDFs into enchanting EPUBs for your Kindle.
+                            <br /><br />
+                            A magical bridge between your documents and your reading sanctuary.
+                        </p>
+                    </div>
+                );
+
+            case 1: // Welcome
                 return (
                     <div className="text-center space-y-6 animate-fadeIn">
                         <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center border-2" style={{ backgroundColor: `${theme.colors.accent}20`, borderColor: theme.colors.accent }}>
@@ -59,7 +72,7 @@ const Onboarding = ({ onComplete }) => {
                     </div>
                 );
 
-            case 1: // Identity
+            case 2: // Identity
                 return (
                     <div className="space-y-6 animate-fadeIn w-full max-w-xs mx-auto">
                         <div className="text-center">
@@ -79,7 +92,7 @@ const Onboarding = ({ onComplete }) => {
                     </div>
                 );
 
-            case 2: // Taste
+            case 3: // Taste
                 return (
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
@@ -109,7 +122,7 @@ const Onboarding = ({ onComplete }) => {
                     </div>
                 );
 
-            case 3: // Source (New Step)
+            case 4: // Source
                 return (
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
@@ -150,7 +163,7 @@ const Onboarding = ({ onComplete }) => {
                     </div>
                 );
 
-            case 4: // Theme
+            case 5: // Theme
                 return (
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
@@ -191,7 +204,7 @@ const Onboarding = ({ onComplete }) => {
 
             {/* Progress Dots */}
             <div className="absolute top-10 flex gap-2">
-                {[0, 1, 2, 3, 4].map(i => (
+                {[0, 1, 2, 3, 4, 5].map(i => (
                     <div
                         key={i}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${i === step ? 'w-6' : 'opacity-20'
@@ -207,11 +220,11 @@ const Onboarding = ({ onComplete }) => {
 
             <button
                 onClick={handleNext}
-                disabled={(step === 1 && !name.trim()) || (step === 3 && !source) || (step === 3 && source === 'Other' && !otherSource.trim())}
+                disabled={(step === 2 && !name.trim()) || (step === 4 && !source) || (step === 4 && source === 'Other' && !otherSource.trim())}
                 className="mb-10 flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
             >
-                {step === 4 ? 'Enter Library' : 'Continue'}
+                {step === 5 ? 'Enter Library' : 'Continue'}
                 <ChevronRight size={20} />
             </button>
         </div>

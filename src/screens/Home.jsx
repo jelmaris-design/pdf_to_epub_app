@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Book, Sparkles, Feather, Star } from 'lucide-react';
+import { Upload, Book, Sparkles, Feather, Star, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
@@ -7,7 +7,7 @@ import { TIERS } from '../utils/userTier';
 
 const Home = ({ onFileSelect, remainingConversions, userTier }) => {
     const { user } = useUser();
-    const { theme } = useTheme();
+    const { theme, setTheme, themes } = useTheme();
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -32,18 +32,6 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
         }
     };
 
-    const glow = {
-        animate: {
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.05, 1],
-            transition: {
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }
-        }
-    };
-
     return (
         <div className="flex flex-col h-full py-6 gap-8 relative overflow-hidden">
             {/* Background Ambient Glows */}
@@ -60,8 +48,8 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                 transition={{ duration: 12, repeat: Infinity }}
             />
 
-            {/* Magic Particles (Simple CSS/Motion implementation) */}
-            {[...Array(5)].map((_, i) => (
+            {/* Magic Particles (Brighter) */}
+            {[...Array(8)].map((_, i) => (
                 <motion.div
                     key={i}
                     className="absolute w-1 h-1 rounded-full pointer-events-none"
@@ -69,10 +57,10 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                     animate={{
                         y: ['0vh', '100vh'],
                         opacity: [0, 1, 0],
-                        scale: [0, 1.5, 0]
+                        scale: [0, 2, 0]
                     }}
                     transition={{
-                        duration: 5 + Math.random() * 5,
+                        duration: 4 + Math.random() * 4,
                         repeat: Infinity,
                         delay: Math.random() * 5,
                         ease: "linear"
@@ -80,27 +68,15 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                 />
             ))}
 
-            {/* Quick Theme Switch */}
+            {/* Quick Theme Switch (Top Left) */}
             <button
                 onClick={() => {
-                    const nextTheme = theme.id.includes('dark') ? 'light' : 'dark';
-                    // Simple toggle logic, assuming basic light/dark themes exist or fallback
-                    // For now, let's just cycle through available themes or toggle a specific one if possible
-                    // Better approach: Just toggle between a light and dark preset if available, or open settings
-                    // User asked for quick switch. Let's try to find a 'light' and 'dark' counterpart.
-                    // If not simple, maybe just cycle.
-                    // Let's just toggle 'light' and 'dark' ids if they exist, otherwise do nothing or open settings.
-                    // Actually, let's just make it a "Toggle Mode" button that switches between the first two themes for now as a demo
-                    // or better, check if current theme is dark-ish and switch to light-ish.
-                    // For simplicity and robustness, let's just cycle 2 main themes.
-                    // Assuming 'light' and 'dark' exist from previous context.
-                    // If not, I'll just use the first two themes in the object.
                     const themeKeys = Object.keys(themes);
                     const currentIndex = themeKeys.indexOf(theme.id);
                     const nextIndex = (currentIndex + 1) % themeKeys.length;
                     setTheme(themeKeys[nextIndex]);
                 }}
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/5 backdrop-blur-sm z-50 hover:bg-black/10 transition-colors"
+                className="absolute top-4 left-4 p-2 rounded-full bg-black/5 backdrop-blur-sm z-50 hover:bg-black/10 transition-colors"
                 style={{ color: theme.colors.text }}
             >
                 <Sparkles size={20} />
@@ -110,9 +86,9 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-2 relative z-10"
+                className="space-y-2 relative z-10 text-center mt-12"
             >
-                <div className="flex items-center gap-2 opacity-60 text-sm font-serif uppercase tracking-widest" style={{ color: theme.colors.subtext }}>
+                <div className="flex items-center justify-center gap-2 opacity-60 text-sm font-serif uppercase tracking-widest" style={{ color: theme.colors.subtext }}>
                     <Star size={12} />
                     <span>The Grand Library</span>
                     <Star size={12} />
@@ -129,57 +105,36 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="relative z-10"
+                    className="relative z-10 flex justify-center"
                 >
-                    <div
-                        className="p-5 rounded-2xl border backdrop-blur-sm flex items-center justify-between shadow-lg"
-                        style={{
-                            backgroundColor: `${theme.colors.card}80`, // Semi-transparent
-                            borderColor: theme.colors.border,
-                            color: theme.colors.text
-                        }}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="relative">
-                                {/* Ink Bottle Visual */}
-                                <div className="w-12 h-12 rounded-full border-2 flex items-end justify-center overflow-hidden relative bg-black/5" style={{ borderColor: theme.colors.accent }}>
-                                    <motion.div
-                                        className="w-full absolute bottom-0"
-                                        style={{ backgroundColor: theme.colors.accent }}
-                                        initial={{ height: '0%' }}
-                                        animate={{ height: `${(remainingConversions / 10) * 100}%` }}
-                                        transition={{ duration: 1.5, ease: "easeOut" }}
-                                    />
-                                    <Sparkles size={20} className="relative z-10 mb-3" style={{ color: remainingConversions > 5 ? theme.colors.bg : theme.colors.subtext }} />
-                                </div>
-                                <motion.div
-                                    className="absolute -top-1 -right-1"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                                >
-                                    <Star size={12} fill={theme.colors.accent} stroke="none" />
-                                </motion.div>
-                            </div>
-                            <div>
-                                <p className="font-bold font-serif text-lg">Mystic Ink</p>
-                                <p className="text-xs opacity-70">Daily Essence Remaining</p>
-                            </div>
+                    <div className="flex flex-col items-center gap-2">
+                        {/* Ink Bottle Visual */}
+                        <div className="w-16 h-16 rounded-full border-2 flex items-end justify-center overflow-hidden relative bg-black/5" style={{ borderColor: theme.colors.accent }}>
+                            <motion.div
+                                className="w-full absolute bottom-0"
+                                style={{ backgroundColor: theme.colors.accent }}
+                                initial={{ height: '0%' }}
+                                animate={{ height: `${(remainingConversions / 10) * 100}%` }}
+                                transition={{ duration: 1.5, ease: "easeOut" }}
+                            />
+                            <Sparkles size={24} className="relative z-10 mb-4" style={{ color: remainingConversions > 5 ? theme.colors.bg : theme.colors.subtext }} />
                         </div>
-                        <div className="text-3xl font-serif font-bold" style={{ color: theme.colors.accent }}>
-                            {remainingConversions}<span className="text-sm opacity-50 ml-1">/10</span>
+                        <div className="text-center">
+                            <p className="font-bold font-serif text-lg" style={{ color: theme.colors.text }}>Mystic Ink</p>
+                            <p className="text-sm opacity-70" style={{ color: theme.colors.subtext }}>{remainingConversions}/10 Drops Remaining</p>
                         </div>
                     </div>
                 </motion.div>
             )}
 
-            {/* Main Action - Grimoire Style */}
+            {/* Main Action - Minimalist */}
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex-1 flex flex-col justify-center relative z-10"
+                className="flex-1 flex flex-col justify-center items-center relative z-10"
             >
-                <label className="block w-full group cursor-pointer relative">
+                <label className="block group cursor-pointer relative">
                     <input
                         type="file"
                         accept=".pdf"
@@ -187,77 +142,21 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                         className="hidden"
                     />
 
-                    {/* Glow Effect behind the card */}
-                    <motion.div
-                        variants={glow}
-                        animate="animate"
-                        className="absolute inset-0 rounded-2xl blur-xl opacity-20 -z-10"
-                        style={{ backgroundColor: theme.colors.accent }}
-                    />
-
                     <motion.div
                         variants={float}
                         animate="animate"
-                        className="w-full aspect-[4/3] rounded-2xl border-2 flex flex-col items-center justify-center gap-6 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-2xl relative overflow-hidden bg-opacity-80 backdrop-blur-md"
+                        className="w-24 h-24 rounded-full flex items-center justify-center shadow-xl transition-transform duration-500 group-hover:scale-110 relative overflow-hidden"
                         style={{
-                            borderColor: theme.colors.accent,
-                            backgroundColor: theme.colors.card
+                            background: `linear-gradient(135deg, ${theme.colors.button}, ${theme.colors.accent})`,
+                            color: theme.colors.buttonText
                         }}
                     >
-                        {/* Ornate Border Corners */}
-                        <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 opacity-40" style={{ borderColor: theme.colors.accent }} />
-                        <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 opacity-40" style={{ borderColor: theme.colors.accent }} />
-                        <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 opacity-40" style={{ borderColor: theme.colors.accent }} />
-                        <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 opacity-40" style={{ borderColor: theme.colors.accent }} />
-
-                        <div
-                            className="w-24 h-24 rounded-full flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
-                            style={{
-                                background: `linear-gradient(135deg, ${theme.colors.button}, ${theme.colors.accent})`,
-                                color: theme.colors.buttonText
-                            }}
-                        >
-                            <Feather size={48} strokeWidth={1.5} />
-                        </div>
-
-                        <div className="text-center space-y-2">
-                            <h3 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>
-                                Transmute Tome
-                            </h3>
-                            <p className="text-sm px-8 opacity-70" style={{ color: theme.colors.subtext }}>
-                                Select a PDF scroll to begin the enchantment
-                            </p>
-                        </div>
-
-                        {/* Button-like visual at bottom */}
-                        <div
-                            className="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0"
-                            style={{ backgroundColor: `${theme.colors.accent}20`, color: theme.colors.accent }}
-                        >
-                            Begin Ritual
-                        </div>
+                        <Plus size={48} strokeWidth={2} />
                     </motion.div>
                 </label>
-            </motion.div>
-
-            {/* Recent Shelf */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="pt-4 border-t opacity-60 relative z-10"
-                style={{ borderColor: theme.colors.border }}
-            >
-                <div className="flex items-center gap-2 mb-3" style={{ color: theme.colors.subtext }}>
-                    <Book size={16} />
-                    <span className="font-serif font-bold text-sm">Recent Transmutations</span>
-                </div>
-                <div
-                    className="h-20 rounded-lg border border-dashed flex items-center justify-center text-sm italic hover:bg-black/5 transition-colors cursor-default"
-                    style={{ borderColor: theme.colors.border, color: theme.colors.subtext }}
-                >
-                    The archives are silent...
-                </div>
+                <p className="mt-6 text-lg font-serif italic opacity-80" style={{ color: theme.colors.text }}>
+                    "Transmute a new tome..."
+                </p>
             </motion.div>
         </div>
     );
