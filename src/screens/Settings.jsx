@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ArrowLeft, ChevronRight, User, Palette, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X, HelpCircle, Check, Share2, Camera, Save, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ChevronRight, User, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X, HelpCircle, Share2, Camera, Save, CheckCircle, FileText } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import { TIERS } from '../utils/userTier';
@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Share } from '@capacitor/share';
 
-const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium, onNavigateWhyUs }) => {
-    const { theme, setTheme, themes } = useTheme();
+const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium, onNavigateWhyUs, onNavigateHowTo }) => {
+    const { theme } = useTheme();
     const { user, updateUser, resetData } = useUser();
 
     const [email, setEmail] = useState(savedEmail || '');
@@ -54,7 +54,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
             await Share.share({
                 title: 'Grimoire PDF to EPUB',
                 text: 'Check out this magical app that converts PDFs to EPUBs for Kindle!',
-                url: 'https://example.com/app', // Replace with actual URL
+                url: 'https://example.com/app',
                 dialogTitle: 'Share with friends',
             });
         } catch (error) {
@@ -169,35 +169,6 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                             style={{ color: theme.colors.subtext }}
                         />
                     </div>
-
-                    {/* Theme Selector */}
-                    <div className="p-4">
-                        <div className="flex items-center gap-3 mb-3">
-                            <Palette size={20} style={{ color: theme.colors.accent }} />
-                            <span className="font-medium" style={{ color: theme.colors.text }}>Atmosphere</span>
-                        </div>
-                        <div className="grid grid-cols-1 gap-2">
-                            {Object.values(themes).map(t => (
-                                <button
-                                    key={t.id}
-                                    onClick={() => setTheme(t.id)}
-                                    className={`p-3 rounded-lg border flex items-center justify-between transition-all ${theme.id === t.id ? 'shadow-md scale-[1.02]' : 'opacity-70 hover:opacity-100'
-                                        }`}
-                                    style={{
-                                        backgroundColor: t.colors.bg,
-                                        borderColor: theme.id === t.id ? theme.colors.accent : 'transparent',
-                                        color: t.colors.text
-                                    }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-6 h-6 rounded-full border" style={{ backgroundColor: t.colors.accent, borderColor: t.colors.border }} />
-                                        <span className="font-serif font-bold">{t.name}</span>
-                                    </div>
-                                    {theme.id === t.id && <Check size={18} style={{ color: theme.colors.accent }} />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
                 </Section>
 
                 {/* Premium */}
@@ -210,15 +181,23 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                     />
                 </Section>
 
-                {/* About & Support */}
-                <Section title="About">
-                    <Item icon={HelpCircle} label="Why This App?" onClick={onNavigateWhyUs} />
-                    <Item icon={HelpCircle} label="How to Use" onClick={() => alert('Guide coming soon!')} />
+                {/* Support */}
+                <Section title="Support">
+                    <Item icon={HelpCircle} label="How to Use" onClick={onNavigateHowTo} />
+                    <Item icon={FileText} label="Why This App?" onClick={onNavigateWhyUs} />
+                    <Item icon={Mail} label="Send Feedback" onClick={() => window.open('mailto:jelmaris.studio@gmail.com?subject=FEEDBACK', '_blank')} />
+                </Section>
+
+                {/* Community */}
+                <Section title="Community">
+                    <Item icon={Instagram} label="Follow on Instagram" onClick={() => window.open('https://instagram.com', '_blank')} />
+                    <Item icon={Play} label="Follow on TikTok" onClick={() => window.open('https://tiktok.com', '_blank')} />
                     <Item icon={Share2} label="Share App" onClick={handleShare} />
+                </Section>
+
+                {/* About */}
+                <Section title="About">
                     <Item icon={User} label="Who am I?" onClick={() => setShowWhoAmI(true)} />
-                    <Item icon={Instagram} label="Instagram" onClick={() => window.open('https://instagram.com', '_blank')} />
-                    <Item icon={Play} label="TikTok" onClick={() => window.open('https://tiktok.com', '_blank')} />
-                    <Item icon={Mail} label="Feedback" onClick={() => window.open('mailto:jelmaris.studio@gmail.com?subject=FEEDBACK', '_blank')} />
                 </Section>
 
                 {/* Danger Zone */}
@@ -229,7 +208,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
 
                 {/* Version */}
                 <div className="text-center opacity-40 text-xs pb-4 font-mono" style={{ color: theme.colors.subtext }}>
-                    v2.6.0 (Archmage)
+                    v2.7.0 (Archmage)
                 </div>
             </div>
 

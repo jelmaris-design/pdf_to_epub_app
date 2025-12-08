@@ -7,7 +7,7 @@ import Result from './screens/Result';
 import Settings from './screens/Settings';
 import Premium from './screens/Premium';
 import WhyUs from './screens/WhyUs';
-import { extractPdfMetadata, extractPdfText } from './utils/pdfHelpers';
+import HowToUse from './screens/HowToUse';
 import { generateEpub } from './utils/epubGenerator';
 import { convertPdfToEpubAPI, isAPIConfigured } from './services/conversionService';
 import { saveAs } from 'file-saver';
@@ -212,6 +212,7 @@ function App() {
             userTier={userTier}
             onNavigatePremium={() => setCurrentScreen('premium')}
             onNavigateWhyUs={() => setCurrentScreen('whyus')}
+            onNavigateHowTo={() => setCurrentScreen('howtouse')}
           />
         );
       case 'premium':
@@ -224,6 +225,12 @@ function App() {
       case 'whyus':
         return (
           <WhyUs
+            onBack={() => setCurrentScreen('settings')}
+          />
+        );
+      case 'howtouse':
+        return (
+          <HowToUse
             onBack={() => setCurrentScreen('settings')}
           />
         );
