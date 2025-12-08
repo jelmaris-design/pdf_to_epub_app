@@ -60,6 +60,52 @@ const Home = ({ onFileSelect, remainingConversions, userTier }) => {
                 transition={{ duration: 12, repeat: Infinity }}
             />
 
+            {/* Magic Particles (Simple CSS/Motion implementation) */}
+            {[...Array(5)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full pointer-events-none"
+                    style={{ backgroundColor: theme.colors.accent, top: -10, left: `${Math.random() * 100}%` }}
+                    animate={{
+                        y: ['0vh', '100vh'],
+                        opacity: [0, 1, 0],
+                        scale: [0, 1.5, 0]
+                    }}
+                    transition={{
+                        duration: 5 + Math.random() * 5,
+                        repeat: Infinity,
+                        delay: Math.random() * 5,
+                        ease: "linear"
+                    }}
+                />
+            ))}
+
+            {/* Quick Theme Switch */}
+            <button
+                onClick={() => {
+                    const nextTheme = theme.id.includes('dark') ? 'light' : 'dark';
+                    // Simple toggle logic, assuming basic light/dark themes exist or fallback
+                    // For now, let's just cycle through available themes or toggle a specific one if possible
+                    // Better approach: Just toggle between a light and dark preset if available, or open settings
+                    // User asked for quick switch. Let's try to find a 'light' and 'dark' counterpart.
+                    // If not simple, maybe just cycle.
+                    // Let's just toggle 'light' and 'dark' ids if they exist, otherwise do nothing or open settings.
+                    // Actually, let's just make it a "Toggle Mode" button that switches between the first two themes for now as a demo
+                    // or better, check if current theme is dark-ish and switch to light-ish.
+                    // For simplicity and robustness, let's just cycle 2 main themes.
+                    // Assuming 'light' and 'dark' exist from previous context.
+                    // If not, I'll just use the first two themes in the object.
+                    const themeKeys = Object.keys(themes);
+                    const currentIndex = themeKeys.indexOf(theme.id);
+                    const nextIndex = (currentIndex + 1) % themeKeys.length;
+                    setTheme(themeKeys[nextIndex]);
+                }}
+                className="absolute top-4 right-4 p-2 rounded-full bg-black/5 backdrop-blur-sm z-50 hover:bg-black/10 transition-colors"
+                style={{ color: theme.colors.text }}
+            >
+                <Sparkles size={20} />
+            </button>
+
             {/* Greeting */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

@@ -217,7 +217,7 @@ function App() {
       case 'premium':
         return (
           <Premium
-            onBack={() => setCurrentScreen('home')}
+            onBack={() => setCurrentScreen('settings')}
             onPurchase={handlePurchase}
           />
         );

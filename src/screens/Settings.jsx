@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ChevronRight, User, Palette, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X } from 'lucide-react';
+import { ArrowLeft, ChevronRight, User, Palette, BookOpen, Crown, Trash2, LogOut, Instagram, Mail, Play, Heart, X, HelpCircle, Check } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useUser } from '../context/UserContext';
 import { TIERS } from '../utils/userTier';
 import { motion, AnimatePresence } from 'framer-motion';
 import { App as CapacitorApp } from '@capacitor/app';
 
-const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium }) => {
+const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium, onNavigateWhyUs }) => {
     const { theme, setTheme, themes } = useTheme();
     const { user, updateUser, resetData } = useUser();
 
@@ -118,19 +118,32 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                             style={{ color: theme.colors.subtext }}
                         />
                     </div>
+
+                    {/* New Theme Selector */}
                     <div className="p-4">
                         <div className="flex items-center gap-3 mb-3">
                             <Palette size={20} style={{ color: theme.colors.accent }} />
                             <span className="font-medium" style={{ color: theme.colors.text }}>Atmosphere</span>
                         </div>
-                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                        <div className="grid grid-cols-1 gap-2">
                             {Object.values(themes).map(t => (
                                 <button
                                     key={t.id}
                                     onClick={() => setTheme(t.id)}
-                                    className={`w-8 h-8 rounded-full border-2 transition-transform ${theme.id === t.id ? 'scale-110 border-current' : 'border-transparent opacity-50'}`}
-                                    style={{ backgroundColor: t.colors.bg, borderColor: theme.id === t.id ? theme.colors.accent : 'transparent' }}
-                                />
+                                    className={`p-3 rounded-lg border flex items-center justify-between transition-all ${theme.id === t.id ? 'shadow-md scale-[1.02]' : 'opacity-70 hover:opacity-100'
+                                        }`}
+                                    style={{
+                                        backgroundColor: t.colors.bg,
+                                        borderColor: theme.id === t.id ? theme.colors.accent : 'transparent',
+                                        color: t.colors.text
+                                    }}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 rounded-full border" style={{ backgroundColor: t.colors.accent, borderColor: t.colors.border }} />
+                                        <span className="font-serif font-bold">{t.name}</span>
+                                    </div>
+                                    {theme.id === t.id && <Check size={18} style={{ color: theme.colors.accent }} />}
+                                </button>
                             ))}
                         </div>
                     </div>
@@ -148,6 +161,7 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
 
                 {/* About & Support */}
                 <Section title="About">
+                    <Item icon={HelpCircle} label="Why This App?" onClick={onNavigateWhyUs} />
                     <Item icon={User} label="Who am I?" onClick={() => setShowWhoAmI(true)} />
                     <Item icon={Instagram} label="Instagram" onClick={() => window.open('https://instagram.com', '_blank')} />
                     <Item icon={Play} label="TikTok" onClick={() => window.open('https://tiktok.com', '_blank')} />
