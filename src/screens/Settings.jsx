@@ -153,8 +153,8 @@ const Settings = ({ onBack, savedEmail, onSaveEmail, userTier, onNavigatePremium
                     />
                 </Section>
 
-                {/* Library Settings */}
-                <Section title="Library">
+                {/* Preferences */}
+                <Section title="Preferences">
                     <div className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <BookOpen size={20} style={{ color: theme.colors.accent }} />

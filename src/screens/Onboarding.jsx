@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
-import { ChevronRight, BookOpen, Palette, User, Check, Share2, Sparkles } from 'lucide-react';
+import { ChevronRight, BookOpen, Palette, User, Check, Share2, Sparkles, FileText, Send, Smartphone } from 'lucide-react';
 
 const GENRES = [
     'Fantasy', 'Sci-Fi', 'Romance', 'Mystery', 'Thriller',
@@ -42,19 +42,36 @@ const Onboarding = ({ onComplete }) => {
 
     const renderStep = () => {
         switch (step) {
-            case 0: // Intro / Purpose
+            case 0: // Intro / Utility Focus
                 return (
-                    <div className="text-center space-y-6 animate-fadeIn px-6">
-                        <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg">
-                            <Sparkles size={48} className="text-white" />
+                    <div className="text-center space-y-8 animate-fadeIn px-6">
+                        <div className="flex justify-center gap-4 mb-4">
+                            <div className="p-4 rounded-2xl bg-red-100 text-red-600">
+                                <FileText size={32} />
+                            </div>
+                            <div className="self-center text-2xl opacity-50">→</div>
+                            <div className="p-4 rounded-2xl bg-blue-100 text-blue-600">
+                                <BookOpen size={32} />
+                            </div>
+                            <div className="self-center text-2xl opacity-50">→</div>
+                            <div className="p-4 rounded-2xl bg-orange-100 text-orange-600">
+                                <Smartphone size={32} />
+                            </div>
                         </div>
-                        <h1 className="text-3xl font-serif font-bold" style={{ color: theme.colors.text }}>
-                            Grimoire
-                        </h1>
-                        <p className="text-lg opacity-80 leading-relaxed" style={{ color: theme.colors.subtext }}>
-                            Transform your PDFs into enchanting EPUBs for your Kindle.
+
+                        <div>
+                            <h1 className="text-3xl font-serif font-bold mb-2" style={{ color: theme.colors.text }}>
+                                Grimoire
+                            </h1>
+                            <p className="text-lg font-medium opacity-90" style={{ color: theme.colors.text }}>
+                                PDF to EPUB Converter
+                            </p>
+                        </div>
+
+                        <p className="text-base opacity-70 leading-relaxed max-w-xs mx-auto" style={{ color: theme.colors.subtext }}>
+                            Convert your documents instantly and send them directly to your Kindle or reading app.
                             <br /><br />
-                            A magical bridge between your documents and your reading sanctuary.
+                            No PC required. Just pure utility.
                         </p>
                     </div>
                 );
@@ -63,11 +80,11 @@ const Onboarding = ({ onComplete }) => {
                 return (
                     <div className="text-center space-y-6 animate-fadeIn">
                         <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center border-2" style={{ backgroundColor: `${theme.colors.accent}20`, borderColor: theme.colors.accent }}>
-                            <BookOpen size={48} style={{ color: theme.colors.accent }} />
+                            <Sparkles size={48} style={{ color: theme.colors.accent }} />
                         </div>
-                        <h1 className="text-4xl font-serif font-bold" style={{ color: theme.colors.text }}>Welcome</h1>
+                        <h1 className="text-4xl font-serif font-bold" style={{ color: theme.colors.text }}>Setup</h1>
                         <p className="text-xl opacity-80 max-w-xs mx-auto" style={{ color: theme.colors.subtext }}>
-                            Your personal library awaits. Let's curate your experience.
+                            Let's customize your experience.
                         </p>
                     </div>
                 );
@@ -78,7 +95,7 @@ const Onboarding = ({ onComplete }) => {
                         <div className="text-center">
                             <User size={48} className="mx-auto mb-4" style={{ color: theme.colors.accent }} />
                             <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Who are you?</h2>
-                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>How should we address you, traveler?</p>
+                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>What should we call you?</p>
                         </div>
                         <input
                             type="text"
@@ -97,8 +114,8 @@ const Onboarding = ({ onComplete }) => {
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
                             <BookOpen size={48} className="mx-auto mb-4" style={{ color: theme.colors.accent }} />
-                            <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Your Taste</h2>
-                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>What stories whisper to you?</p>
+                            <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Reading Interests</h2>
+                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>What do you usually convert?</p>
                         </div>
                         <div className="flex flex-wrap justify-center gap-3">
                             {GENRES.map(genre => (
@@ -128,7 +145,7 @@ const Onboarding = ({ onComplete }) => {
                         <div className="text-center">
                             <Share2 size={48} className="mx-auto mb-4" style={{ color: theme.colors.accent }} />
                             <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Discovery</h2>
-                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>How did you find this hidden library?</p>
+                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>How did you find us?</p>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             {SOURCES.map(s => (
@@ -168,8 +185,8 @@ const Onboarding = ({ onComplete }) => {
                     <div className="space-y-6 animate-fadeIn w-full">
                         <div className="text-center">
                             <Palette size={48} className="mx-auto mb-4" style={{ color: theme.colors.accent }} />
-                            <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>Atmosphere</h2>
-                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>Choose your reading sanctuary.</p>
+                            <h2 className="text-2xl font-serif font-bold" style={{ color: theme.colors.text }}>App Theme</h2>
+                            <p className="opacity-70 text-sm" style={{ color: theme.colors.subtext }}>Choose your style.</p>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
                             {Object.values(themes).map(t => (
@@ -224,7 +241,7 @@ const Onboarding = ({ onComplete }) => {
                 className="mb-10 flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 style={{ backgroundColor: theme.colors.button, color: theme.colors.buttonText }}
             >
-                {step === 5 ? 'Enter Library' : 'Continue'}
+                {step === 5 ? 'Start Converting' : 'Continue'}
                 <ChevronRight size={20} />
             </button>
         </div>
